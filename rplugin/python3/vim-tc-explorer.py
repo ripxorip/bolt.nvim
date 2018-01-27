@@ -10,7 +10,15 @@ class Main(object):
     def draw(self):
         explorer = self.nvim.buffers[self.explorerBufferNumber]
         explorer[:] = ['==== TC explorer (alpha) ===']
+        # Draw current path 
+        explorer.append(self.cwd)
+        explorer.append('----------------------------')
         explorer.append(self.fileredFiles)
+
+    def cd(self, path):
+        self.cwd = os.path.abspath(os.path.join(self.cwd, path))
+        self.currentFiles = os.listdir(self.cwd)
+        self.fileredFiles = self.currentFiles
 
     def updateFilter(self):
         self.fileredFiles = []
@@ -43,9 +51,12 @@ class Main(object):
         self.nvim.command("startinsert!")
         # Need to remap more
         self.nvim.command("inoremap <buffer> <CR> $")
+        # Need to remap more
+        self.nvim.command("inoremap <buffer> <BS> %")
 
         # The the current files
-        self.currentFiles = os.listdir()
+        self.cwd = os.path.abspath(os.getcwd())
+        self.currentFiles = os.listdir(self.cwd)
         self.fileredFiles = self.currentFiles
         # Draw first frame
         self.draw()
@@ -56,6 +67,18 @@ class Main(object):
         # self.nvim.current.line = (self.nvim.current.buffer.name)
         # self.nvim.command('normal! 0')
         inputLine = self.nvim.current.line
+        # Check if backspace or enter (special keys)
+        if inputLine.endswith('%') == True:
+            # We have a backsapce
+            inputLine = inputLine.replace("%", "")
+            if not inputLine:
+                # Change directory to the parrent
+                self.cd('..')
+            inputLine = inputLine[:-1]
+        elif inputLine.endswith('$') == True:
+            # We have an enter
+            inputLine = inputLine.replace("$", "")
+        self.nvim.current.line = inputLine
         self.currentInput = '.*'
         # Add regular expression
         for c in inputLine:
