@@ -26,6 +26,8 @@ class Main(object):
         self.cwd = os.path.abspath(os.path.join(self.cwd, path))
         self.currentFiles = os.listdir(self.cwd)
         self.fileredFiles = self.currentFiles
+        # FIXME - hack..
+        self.changeSelection(0)
 
     def updateFilter(self):
         # TODO: Make the filtering smarter, providing the best match
@@ -52,6 +54,24 @@ class Main(object):
         self.nvim.command('bd %s' % self.explorerBufferNumber)
         self.nvim.command('bd %s' % self.inputBufferNumber)
 
+
+    @neovim.command("TcExpEnter", range='', nargs='*', sync=True)
+    def tc_enter(self, args, range):
+        # Handle enter
+        if os.path.isdir(os.path.join(self.cwd, self.fileredFiles[self.selected])):
+            self.cd(self.fileredFiles[self.selected])
+            self.draw()
+            # Clear the line
+            self.nvim.current.line = ''
+            self.nvim.command('startinsert')
+        else:
+            # Need to solve this part to get syntax, something with the nested 
+            # autocmds.... Cont. here...
+            self.nvim.command('e %s' % os.path.abspath(os.path.join(self.cwd, self.fileredFiles[self.selected])))
+            self.close()
+            return
+
+
     @neovim.command("Tc", range='', nargs='*', sync=True)
     def tc_explore(self, args, range):
         """ Initialize the plugin """
@@ -76,7 +96,7 @@ class Main(object):
         self.nvim.command("startinsert!")
         # Remap keys for the input layer
         # Enter
-        self.nvim.command("inoremap <buffer> <CR> $")
+        self.nvim.command("inoremap <buffer> <CR> <ESC>:TcExpEnter<CR>")
         # Backspace
         self.nvim.command("inoremap <buffer> <BS> %")
         # Up
@@ -123,6 +143,8 @@ class Main(object):
             if os.path.isdir(os.path.join(self.cwd, self.fileredFiles[self.selected])):
                 self.cd(self.fileredFiles[self.selected])
             else:
+                # Need to solve this part to get syntax, something with the nested 
+                # autocmds.... Cont. here...
                 self.nvim.command('e %s' % os.path.abspath(os.path.join(self.cwd, self.fileredFiles[self.selected])))
                 self.close()
                 return
@@ -142,8 +164,4 @@ class Main(object):
         self.updateFilter()
         # Draw
         self.draw()
-
-    @neovim.function('DoItPython')
-    def doItPython(self, args):
-        self.nvim.command('echo "hello from DoItPython %s %s"')
 
