@@ -29,24 +29,29 @@ class Main(object):
         self.changeSelection(0)
 
     def updateFilter(self):
-        # TODO: Make the filtering smarter, providing the best match
-        # First, try to match the whole word
+        #TODO can even add one more pass with matching from start of word
+        beginningString = '^' + self.currentInput + '.*'
         wholeString = '.*' + self.currentInput + '.*'
+        fuzzy = '.*'
+        for c in self.currentInput:
+            fuzzy += c + '.*'
         c_currentFiles = self.currentFiles[:]
         self.fileredFiles = []
+        for entry in c_currentFiles:
+            res = re.search(beginningString, entry, re.IGNORECASE)
+            if res != None:
+                self.fileredFiles.append(entry)
+                c_currentFiles.remove(entry)
         for entry in c_currentFiles:
             res = re.search(wholeString, entry, re.IGNORECASE)
             if res != None:
                 self.fileredFiles.append(entry)
                 c_currentFiles.remove(entry)
-        # Now, try using fuzzy match
-        fuzzy = '.*'
-        for c in self.currentInput:
-            fuzzy += c + '.*'
         for entry in c_currentFiles:
             res = re.search(fuzzy, entry, re.IGNORECASE)
             if res != None:
                 self.fileredFiles.append(entry)
+                c_currentFiles.remove(entry)
         self.changeSelection(0)
 
     def changeSelection(self, offset):
