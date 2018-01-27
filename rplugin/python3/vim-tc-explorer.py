@@ -26,18 +26,27 @@ class Main(object):
         self.cwd = os.path.abspath(os.path.join(self.cwd, path))
         self.currentFiles = os.listdir(self.cwd)
         self.fileredFiles = self.currentFiles
-        # FIXME - hack..
         self.changeSelection(0)
 
     def updateFilter(self):
         # TODO: Make the filtering smarter, providing the best match
-        # first and perhaps add case insensitity
+        # First, try to match the whole word
+        wholeString = '.*' + self.currentInput + '.*'
+        c_currentFiles = self.currentFiles[:]
         self.fileredFiles = []
-        for entry in self.currentFiles:
-            res = re.search(self.currentInput, entry)
+        for entry in c_currentFiles:
+            res = re.search(wholeString, entry, re.IGNORECASE)
             if res != None:
                 self.fileredFiles.append(entry)
-        # FIXME - hack..
+                c_currentFiles.remove(entry)
+        # Now, try using fuzzy match
+        fuzzy = '.*'
+        for c in self.currentInput:
+            fuzzy += c + '.*'
+        for entry in c_currentFiles:
+            res = re.search(fuzzy, entry, re.IGNORECASE)
+            if res != None:
+                self.fileredFiles.append(entry)
         self.changeSelection(0)
 
     def changeSelection(self, offset):
@@ -129,6 +138,7 @@ class Main(object):
                 # Change directory to the parrent
                 self.cd('..')
             inputLine = inputLine[:-1]
+        # FIXME: These matches shall be commands instead, just like for "enter"
         elif inputLine.endswith('!') == True:
             inputLine = inputLine.replace("!", "")
             # Handle selection up
@@ -156,10 +166,8 @@ class Main(object):
             self.close()
             return
         self.nvim.current.line = inputLine
-        self.currentInput = '.*'
         # Add regular expression
-        for c in inputLine:
-            self.currentInput += c + '.*'
+        self.currentInput = inputLine
         # Update filtered files
         self.updateFilter()
         # Draw
