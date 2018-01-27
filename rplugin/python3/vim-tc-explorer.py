@@ -28,18 +28,29 @@ class Main(object):
         self.fileredFiles = self.currentFiles
 
     def updateFilter(self):
+        # TODO: Make the filtering smarter, providing the best match
+        # first and perhaps add case insensitity
         self.fileredFiles = []
         for entry in self.currentFiles:
             res = re.search(self.currentInput, entry)
             if res != None:
                 self.fileredFiles.append(entry)
+        # FIXME - hack..
+        self.changeSelection(0)
 
     def changeSelection(self, offset):
         self.selected += offset
         if self.selected < 0:
             self.selected = 0
-        elif self.selected > len(self.fileredFiles):
+        elif self.selected >= len(self.fileredFiles):
             self.selected = len(self.fileredFiles)-1
+
+    def close(self):
+        # Method used to close the plugin
+        # Delete both buffers
+        self.nvim.command('stopinsert')
+        self.nvim.command('bd %s' % self.explorerBufferNumber)
+        self.nvim.command('bd %s' % self.inputBufferNumber)
 
     @neovim.command("Tc", range='', nargs='*', sync=True)
     def tc_explore(self, args, range):
@@ -72,6 +83,8 @@ class Main(object):
         self.nvim.command("inoremap <buffer> <C-k> !")
         # Down
         self.nvim.command("inoremap <buffer> <C-j> @")
+        # Close
+        self.nvim.command("inoremap <buffer> <C-q> ?")
 
         # The the current files
         self.cwd = os.path.abspath(os.getcwd())
@@ -107,6 +120,19 @@ class Main(object):
         elif inputLine.endswith('$') == True:
             inputLine = inputLine.replace("$", "")
             # Handle enter
+            if os.path.isdir(os.path.join(self.cwd, self.fileredFiles[self.selected])):
+                self.cd(self.fileredFiles[self.selected])
+            else:
+                self.nvim.command('e %s' % os.path.abspath(os.path.join(self.cwd, self.fileredFiles[self.selected])))
+                self.close()
+                return
+            # Else, edit the file in a clever way
+            # Clear the filter
+            inputLine = ""
+        elif inputLine.endswith('?') == True:
+            # Close
+            self.close()
+            return
         self.nvim.current.line = inputLine
         self.currentInput = '.*'
         # Add regular expression
