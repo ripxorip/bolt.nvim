@@ -13,7 +13,14 @@ class Main(object):
         # Draw current path 
         explorer.append(self.cwd)
         explorer.append('----------------------------')
-        explorer.append(self.fileredFiles)
+        # FIXME: Draw selection using either color or arrow
+        # starting with drawing arrow (works also for terminals)
+        for idx, val in enumerate(self.fileredFiles):
+            if idx == self.selected:
+                token = "===> "
+            else:
+                token = "     "
+            explorer.append(token + val) 
 
     def cd(self, path):
         self.cwd = os.path.abspath(os.path.join(self.cwd, path))
@@ -26,6 +33,13 @@ class Main(object):
             res = re.search(self.currentInput, entry)
             if res != None:
                 self.fileredFiles.append(entry)
+
+    def changeSelection(self, offset):
+        self.selected += offset
+        if self.selected < 0:
+            self.selected = 0
+        elif self.selected > len(self.fileredFiles):
+            self.selected = len(self.fileredFiles)-1
 
     @neovim.command("Tc", range='', nargs='*', sync=True)
     def tc_explore(self, args, range):
@@ -49,15 +63,22 @@ class Main(object):
         # Change to input buffer
         self.nvim.current.buffer = self.nvim.buffers[self.inputBufferNumber]
         self.nvim.command("startinsert!")
-        # Need to remap more
+        # Remap keys for the input layer
+        # Enter
         self.nvim.command("inoremap <buffer> <CR> $")
-        # Need to remap more
+        # Backspace
         self.nvim.command("inoremap <buffer> <BS> %")
+        # Up
+        self.nvim.command("inoremap <buffer> <C-k> !")
+        # Down
+        self.nvim.command("inoremap <buffer> <C-j> @")
 
         # The the current files
         self.cwd = os.path.abspath(os.getcwd())
         self.currentFiles = os.listdir(self.cwd)
         self.fileredFiles = self.currentFiles
+        # Index that tracks which file that is selected
+        self.selected = 0
         # Draw first frame
         self.draw()
 
@@ -69,15 +90,23 @@ class Main(object):
         inputLine = self.nvim.current.line
         # Check if backspace or enter (special keys)
         if inputLine.endswith('%') == True:
-            # We have a backsapce
             inputLine = inputLine.replace("%", "")
+            # Handle backspace
             if not inputLine:
                 # Change directory to the parrent
                 self.cd('..')
             inputLine = inputLine[:-1]
+        elif inputLine.endswith('!') == True:
+            inputLine = inputLine.replace("!", "")
+            # Handle selection up
+            self.changeSelection(-1)
+        elif inputLine.endswith('@') == True:
+            inputLine = inputLine.replace("@", "")
+            # Handle selection down
+            self.changeSelection(1)
         elif inputLine.endswith('$') == True:
-            # We have an enter
             inputLine = inputLine.replace("$", "")
+            # Handle enter
         self.nvim.current.line = inputLine
         self.currentInput = '.*'
         # Add regular expression
