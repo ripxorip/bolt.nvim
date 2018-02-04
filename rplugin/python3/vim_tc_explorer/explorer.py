@@ -17,6 +17,8 @@ class explorer(object):
         self.cwd = cwd
         # The the current files
         self.currentFiles = os.listdir(self.cwd)
+        # Sort based on folders
+        self.sortFiles()
         self.fileredFiles = self.currentFiles[:]
         # Index that tracks which file that is selected
         self.selected = 0
@@ -25,6 +27,20 @@ class explorer(object):
         # The header takes up 9 rows
         self.headerLength = 9
 
+    def sortFiles(self):
+        ogFiles = []
+        ogFiles[:] = self.currentFiles[:]
+        self.currentFiles[:] = []
+        # First folders
+        for file in ogFiles:
+            if(os.path.isdir(os.path.abspath(os.path.join(self.cwd, file)))):
+                self.currentFiles.append(file)
+        # Then files
+        for file in ogFiles:
+            if(not os.path.isdir(os.path.abspath(os.path.join(self.cwd,
+                                                              file)))):
+                self.currentFiles.append(file)
+
     def assignBuffer(self, buffer):
         self.buffer = buffer
 
@@ -32,7 +48,6 @@ class explorer(object):
         explorer = self.buffer
         # New way of getting the header
         explorer[:] = self.getUIHeader()
-        # FIXME: Add coloring
         for idx, val in enumerate(self.fileredFiles):
             if idx == self.selected and self.active:
                 token = "-->"
@@ -86,13 +101,23 @@ class explorer(object):
     def cd(self, path):
         self.cwd = os.path.abspath(os.path.join(self.cwd, path))
         self.currentFiles = os.listdir(self.cwd)
+        self.sortFiles()
         self.fileredFiles = self.currentFiles[:]
+        self.selected = 0
         self.changeSelection(0)
 
     def updateListing(self, pattern):
+        ret = 0
         self.pattern = pattern
+        filtCopy = []
+        filtCopy[:] = self.fileredFiles[:]
         self.filter.filter(self.currentFiles, pattern, self.fileredFiles)
+        if(len(self.fileredFiles) > 0):
+            ret = 1
+        else:
+            self.fileredFiles[:] = filtCopy[:]
         self.changeSelection(0)
+        return ret
 
     def changeSelection(self, offset):
         self.selected += offset
@@ -117,13 +142,13 @@ class explorer(object):
         ret.append(leadingC + 'Bolt for Neovim (alpha)')
         # Shall be highlighted
         ret.append(leadingC + '  $>' + self.cwd)
-        qhStr = '  Quik Help: <Ret>:Open   <C-q>:Quit   <C-s>:Set CWD'
+        qhStr = '  Quick Help: <Ret>:Open   <C-q>:Quit   <C-s>:Set CWD'
         ret.append(leadingC + qhStr)
-        qhStr = '             <C-f>:Search <C-p>:Create File'
+        qhStr = '              <C-f>:Find   <C-g>:Grep   <C-p>:New File'
         ret.append(leadingC + qhStr)
-        qhStr = '             <F2>:Rename  <F5>:Copy    <F6>:Move   '
+        qhStr = '              <F2>:Rename  <F5>:Copy    <F6>:Move   '
         ret.append(leadingC + qhStr)
-        qhStr = '             <F7>:Mkdir   <F8>:Delete   '
+        qhStr = '              <F7>:Mkdir   <F8>:Delete   '
         ret.append(leadingC + qhStr)
         ret.append(leadingC + bar)
         return ret

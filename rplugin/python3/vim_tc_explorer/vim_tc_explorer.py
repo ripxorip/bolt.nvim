@@ -77,7 +77,16 @@ class vim_tc_explorer(object):
         # Tab
         self.nvim.command("inoremap <buffer> <tab> <ESC>:TcExpTab<CR>")
         # Search
-        str = "inoremap <buffer> <C-f> <ESC>:TcSearch (-t/-g)file;(pattern): "
+        str = "inoremap <buffer> <C-b> <ESC>:TcSearch (-t/-g)file;(pattern): "
+        self.nvim.command(str)
+        # Find
+        str = "inoremap <buffer> <C-f> <ESC>:TcFind "
+        self.nvim.command(str)
+        # Grep
+        str = "inoremap <buffer> <C-g> <ESC>:TcGrep "
+        self.nvim.command(str)
+        # Abort filter
+        str = "inoremap <buffer> <C-c> <ESC>:TcAbortFilter<CR>"
         self.nvim.command(str)
         # Set cwd
         self.nvim.command("inoremap <buffer> <C-s> <ESC>:TcSetCwd<CR>")
@@ -85,7 +94,7 @@ class vim_tc_explorer(object):
         self.nvim.command("inoremap <buffer> <C-a> <ESC>:TcSearchToggle<CR>")
         # File operations
         #
-        # Original total commander shortcuts 
+        # Original total commander shortcuts
         # F1 - Help
         # F2 - Refresh (suggest to map it to rename)
         # F3 - List file content
@@ -98,8 +107,8 @@ class vim_tc_explorer(object):
         self.nvim.command("inoremap <buffer> <F5> <ESC>:BoltCopy dest: ")
         self.nvim.command("inoremap <buffer> <F6> <ESC>:BoltMove name: ")
         self.nvim.command("inoremap <buffer> <F7> <ESC>:BoltMkdir name: ")
-        self.nvim.command("inoremap <buffer> <F8> <ESC>:BoltDelete Delete? ")
-
+        remapStr = "inoremap <buffer> <F8> <ESC>:BoltDelete Delete(y/n)? "
+        self.nvim.command(remapStr)
         remapStr = "inoremap <buffer> <C-p> <ESC>:BoltCreateFile name: "
         self.nvim.command(remapStr)
         # Close
@@ -135,12 +144,15 @@ class vim_tc_explorer(object):
         # Go back to the input buffer window
         self.nvim.command('wincmd j')
         # FIXME: Add one more line for quick help
-        self.nvim.current.window.height = 1
+        self.nvim.current.window.height = 2
         # Change to input buffer
         self.nvim.current.buffer = self.nvim.buffers[self.inputBufferNumber]
         self.nvim.command("startinsert!")
+        str = 'Help: <kbd> Filter pattern; <bs> Go to parent'
+        self.nvim.current.buffer.append(str)
         self.createKeyMap()
         # Draw first frame
+        self.explorers[self.selectedExplorer].updateListing("")
         self.explorers[self.selectedExplorer].draw()
 
     def tc_explore_dual(self, args, range):
@@ -175,14 +187,18 @@ class vim_tc_explorer(object):
         # Go back to the input buffer window
         self.nvim.command('wincmd j')
         # FIXME: Add one more line for quick help
-        self.nvim.current.window.height = 1
+        self.nvim.current.window.height = 2
         # Change to input buffer
         self.nvim.current.buffer = self.nvim.buffers[self.inputBufferNumber]
         self.nvim.command("startinsert!")
+        str = 'Help: <kbd> Filter pattern; <bs> Go to parent'
+        self.nvim.current.buffer.append(str)
         self.createKeyMap()
         # Draw first frame
         self.explorers[0].active = True
         self.explorers[1].active = False
+        self.explorers[0].updateListing("")
+        self.explorers[1].updateListing("")
         self.explorers[0].draw()
         self.explorers[1].draw()
 
@@ -200,6 +216,7 @@ class vim_tc_explorer(object):
             # Clear the line
             self.nvim.current.line = ''
             self.nvim.command('startinsert')
+            self.abortFilter(None, None)
         else:
             filePath = os.path.join(exp.cwd, selFile)
             if(lineNum is not None):
@@ -246,11 +263,47 @@ class vim_tc_explorer(object):
         self.nvim.command('normal! $')
 
     def tc_close(self, args, range):
-        self.close()
+        self.close(False)
 
     def tc_set_cwd(self, args, range):
         exp = self.explorers[self.selectedExplorer]
         self.nvim.command("cd %s" % exp.cwd)
+        self.nvim.command('startinsert')
+        self.nvim.command('normal! $')
+
+    def tc_find(self, args, range):
+        """ The find command """
+        # Save the current explorer for restoration when the searcher finish
+        self.expSave = self.explorers[self.selectedExplorer]
+        # Replace the current explorer with a searcher and borrow its buffer
+        se = searcher(self.nvim, self.expSave.buffer, self.expSave.cwd)
+        se.window = self.expSave.window
+        # Perfor the search with the correct parameters
+        dir = self.expSave.cwd
+        se.find(dir, args[0])
+        self.explorers[self.selectedExplorer] = se
+        self.explorers[self.selectedExplorer].draw()
+        self.nvim.command('startinsert')
+        self.nvim.command('normal! $')
+
+    def tc_grep(self, args, range):
+        """ The grep command """
+        # Save the current explorer for restoration when the searcher finish
+        self.expSave = self.explorers[self.selectedExplorer]
+        # Replace the current explorer with a searcher and borrow its buffer
+        se = searcher(self.nvim, self.expSave.buffer, self.expSave.cwd)
+        se.window = self.expSave.window
+        # Perfor the search with the correct parameters
+        dir = self.expSave.cwd
+        filePattern = ""
+        if(len(args) > 1):
+            filePattern = args[0]
+            pattern = args[1]
+        else:
+            pattern = args[0]
+        se.grep(dir, filePattern, pattern)
+        self.explorers[self.selectedExplorer] = se
+        self.explorers[self.selectedExplorer].draw()
         self.nvim.command('startinsert')
         self.nvim.command('normal! $')
 
@@ -326,10 +379,21 @@ class vim_tc_explorer(object):
         self.nvim.command('normal! $')
         exp.draw()
 
+    def abortFilter(self, args, range):
+        str = 'Help: <kbd> Filter pattern; <bs> Go to parent'
+        self.nvim.current.buffer[1] = str
+        self.nvim.current.buffer[0] = ""
+        self.nvim.command('startinsert')
+        exp = self.explorers[self.selectedExplorer]
+        exp.updateListing("")
+        exp.draw()
+
     def handle_input(self):
         """ Input handler for filter """
         exp = self.explorers[self.selectedExplorer]
         inputLine = self.nvim.current.line
+        if(inputLine is not "" and inputLine is not "%"):
+            self.nvim.current.buffer[1] = 'Filter active: (abort with <c-c>)'
         # Check for backspace
         if inputLine.endswith('%'):
             inputLine = inputLine.replace("%", "")
@@ -343,24 +407,14 @@ class vim_tc_explorer(object):
                     self.nvim.current.buffer = exp.buffer
                     self.nvim.command('setlocal filetype=vim_tc_explorer')
                     self.nvim.current.buffer = prevbuffer
-                else:
+                elif (not self.nvim.current.buffer[1] ==
+                        'Filter active: (abort with <c-c>)'):
                     # Change directory to the parrent
                     exp.cd('..')
             inputLine = inputLine[:-1]
-        # FIXME: These matches shall be commands instead, just like for "enter"
-        elif inputLine.endswith('!'):
-            inputLine = inputLine.replace("!", "")
-            # Handle selection up
-            exp.changeSelection(-1)
-        elif inputLine.endswith('@'):
-            inputLine = inputLine.replace("@", "")
-            # Handle selection down
-            exp.changeSelection(1)
-        elif inputLine.endswith('?'):
-            # Close
-            self.close(False)
-            return
+        # Check if we still have matches
+        if(0 == exp.updateListing(inputLine)):
+            inputLine = inputLine[:-1]
         self.nvim.current.line = inputLine
-        exp.updateListing(inputLine)
         # Draw
         exp.draw()

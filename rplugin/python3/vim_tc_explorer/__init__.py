@@ -74,6 +74,18 @@ class VimTcExplorerHandlers(object):
     def tc_search(self, args, range):
         self.TcExplorer.tc_search(args, range)
 
+    @neovim.command("TcFind", range='', nargs='*', sync=True)
+    def tc_find(self, args, range):
+        self.TcExplorer.tc_find(args, range)
+
+    @neovim.command("TcGrep", range='', nargs='*', sync=True)
+    def tc_grep(self, args, range):
+        self.TcExplorer.tc_grep(args, range)
+
+    @neovim.command("TcAbortFilter", range='', nargs='*', sync=True)
+    def tc_abort_filter(self, args, range):
+        self.TcExplorer.abortFilter(args, range)
+
     @neovim.command("TcSearchToggle", range='', nargs='*', sync=True)
     def tc_search_toggle(self, args, range):
         self.TcExplorer.tc_search_toggle(args, range)

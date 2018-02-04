@@ -4,6 +4,8 @@
 
 _"Total Commander inspired file manager for the 21st century"_
 
+[Gitter **Chat**](https://gitter.im/bolt-nvim/Lobby)
+
 ## Demo
 
 ### Navigation
@@ -52,10 +54,17 @@ You can enable the Neovim Python3 interface with pip:
 
     pip3 install neovim
 
+## Development
+Currently, the majority of the work is about refactoring the _bolt core_ parts of the plugin
+to a separate git repository isolating the backend from the frontend (which is currently not the
+case). Hopefully this will increase speed and making it possible to use in other scenarios as well.
+As soon as that work is completed the core will be imported here and the plugin updated.
+
 ### TODOs:
+- Refactor _Bolt core_
 - Create proper vim documentation
 - Complete the dual-pane mode
-- Make it possible navigate archives (TC feature)
+- Make it possible to navigate archives (TC feature)
 - Populate README.md with keybindings
 
 ## Self-Promotion
