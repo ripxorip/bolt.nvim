@@ -4,11 +4,8 @@
 # License: MIT license
 # ============================================================================
 
-import sys
-sys.path.append('..')
-
 import curses
-from bolt_tui import tui
+from bolt_tui.tui import tui
 
 def print_panes(stdscr, bolt):
     buffer = bolt.get_panes()
@@ -17,7 +14,7 @@ def print_panes(stdscr, bolt):
 
 def main(stdscr):
 
-    bolt = tui.tui()
+    bolt = tui()
 
     # Clear screen
     stdscr.clear()
