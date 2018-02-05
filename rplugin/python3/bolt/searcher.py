@@ -4,7 +4,9 @@
 # License: MIT license
 # ============================================================================
 import os
-from vim_tc_explorer.filter import filter
+from bolt.filter import filter
+# In order to call ripgrep from python instead of vim
+from subprocess import check_output
 
 
 class resultGroup(object):
@@ -15,34 +17,21 @@ class resultGroup(object):
 
 
 class searcher(object):
-    def __init__(self, nvim, buffer, cwd):
-        self.nvim = nvim
+    def __init__(self):
         self.filter = filter()
-        self.buffer = buffer
         # Attribute to distinguish from explorer
         self.isSearcher = True
         self.selected = 0
         self.fileredFiles = []
         self.expanded = False
-        self.cwd = cwd
         # Header takes up 6 rows
         self.headerLength = 6
-
-    def assignBuffer(self, buffer):
-        # This method is only called during re-init so we already have old
-        # results
-        self.buffer = buffer
-        self.prevbuffer = self.nvim.current.buffer
-        self.nvim.current.buffer = self.buffer
-        self.nvim.command('setlocal filetype=vim_tc_search_result')
-        self.nvim.current.buffer = self.prevbuffer
-        # self.createResultStructure()
-        # self.draw()
+        self.matches = []
 
     def createResultStructure(self):
         self.results = {}
         self.resultFiles = []
-        for line in self.buffer[1:len(self.buffer)]:
+        for line in self.matches[1:len(self.matches)]:
             # Process each line
             f = line.split(':')
             if(f is not None):
@@ -66,26 +55,17 @@ class searcher(object):
                     self.rawFileList.append(l)
 
     def search(self, dir, filePattern, inputPattern):
-        self.prevbuffer = self.nvim.current.buffer
-        self.nvim.current.buffer = self.buffer
-        self.nvim.command('setlocal filetype=vim_tc_search_result')
-        self.dir = dir
-        self.inputPattern = inputPattern
-        self.filePattern = filePattern
-        self.command = "cd %s && " % dir
-        if(not filePattern.startswith('-')):
-                filePattern = '-t' + filePattern
-        if(inputPattern is not ''):
-            self.command += "rg %s %s --vimgrep" % (filePattern, inputPattern)
-        else:
-            filePattern = filePattern.replace('-t', '-g')
-            self.command += "rg %s --files" % (filePattern)
-        self.buffer[:] = []
-        # Below does not work for mac
-        # self.nvim.command("r !\"%s\"" % self.command)
-        # Verify that this works for Windows
-        self.nvim.command("r !%s" % self.command)
-        self.nvim.current.buffer = self.prevbuffer
+        # Temporarily change system cwd
+        ogCwd = os.getcwd()
+        os.chdir(dir)
+        # Perform the search
+        rawoutput = check_output(['rg', '--vimgrep', '--type',
+                                  filePattern, inputPattern])
+        # Parse raw output
+        rawoutput = rawoutput.decode()
+        self.matches = rawoutput.splitlines()
+        # Jump back
+        os.chdir(ogCwd)
         self.createResultStructure()
         self.getFileListFromResults()
 
@@ -106,17 +86,12 @@ class searcher(object):
         self.expanded = not self.expanded
         self.getFileListFromResults()
 
-    def draw(self):
-        self.buffer[:] = self.getUIHeader()
-        # Draw each file
-        for idx, val in enumerate(self.fileList):
-            if idx == self.selected:
-                token = '-->'
-            else:
-                token = '   '
-            self.buffer.append(token + val)
-        # Debug
-        # self.buffer.append(self.command)
+    def getListing(self):
+        files = []
+        for f in self.fileredFiles:
+            files.append(f)
+        # Searcher only returns files
+        return [None, files]
 
     def getSelected(self):
         lineNum = None
@@ -124,22 +99,9 @@ class searcher(object):
         if(':' in currLine):
             # This is a match in a file
             lineParts = currLine.split(':')
-            self.buffer[:] = lineParts
+            self.matches[:] = lineParts
             pathToFile = os.path.join(self.cwd, lineParts[0])
             lineNum = int(lineParts[1])
         else:
             pathToFile = os.path.join(self.cwd, currLine)
         return pathToFile, lineNum
-
-    def getUIHeader(self):
-        bar = "==============================================================="
-        leadingC = '#'
-        ret = []
-        ret.append(leadingC + bar)
-        ret.append(leadingC + 'Bolt search results')
-        # Shall be highlighted
-        ret.append(leadingC + '  $>' + self.command)
-        qhStr = '  Quik Help: <Ret>:Open <C-a>:Expand <C-q>:Quit'
-        ret.append(leadingC + qhStr)
-        ret.append(leadingC + bar)
-        return ret

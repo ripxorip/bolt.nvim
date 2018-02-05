@@ -49,7 +49,8 @@ class bolt(object):
     # ==========================================
     def search(self, filePattern, inputPattern,
                fromCommander, commander):
-        pass
+        dir = self.commanders[fromCommander].cwd
+        self.commanders[commander].search(dir, filePattern, inputPattern)
 
     # ==========================================
     # Explorer exclusive commands
