@@ -5,7 +5,7 @@
 # ============================================================================
 import os
 import shutil
-from vim_tc_explorer.filter import filter
+from bolt.filter import filter
 
 
 class explorer(object):
@@ -24,25 +24,6 @@ class explorer(object):
         self.pattern = ''
         # The header takes up 9 rows
         self.headerLength = 9
-
-    def assignBuffer(self, buffer):
-        self.buffer = buffer
-
-    def draw(self):
-        explorer = self.buffer
-        # New way of getting the header
-        explorer[:] = self.getUIHeader()
-        # FIXME: Add coloring
-        for idx, val in enumerate(self.fileredFiles):
-            if idx == self.selected and self.active:
-                token = "-->"
-            else:
-                token = "   "
-            if(os.path.isdir(os.path.abspath(os.path.join(self.cwd, val)))):
-                # Folder
-                explorer.append(token + ' +' + val + '/')
-            else:
-                explorer.append(token + '  ' + val)
 
     def rename(self, newName):
         os.rename(self.getSelected()[0], os.path.join(self.cwd, newName))
@@ -105,25 +86,12 @@ class explorer(object):
         pathToFile = os.path.join(self.cwd, self.fileredFiles[self.selected])
         return pathToFile, None
 
-    # Gui header
-    def getUIHeader(self):
-        bar = "==============================================================="
-        if(self.active):
-            leadingC = '# '
-        else:
-            leadingC = '" '
-        ret = []
-        ret.append(leadingC + bar)
-        ret.append(leadingC + 'Bolt for Neovim (alpha)')
-        # Shall be highlighted
-        ret.append(leadingC + '  $>' + self.cwd)
-        qhStr = '  Quik Help: <Ret>:Open   <C-q>:Quit   <C-s>:Set CWD'
-        ret.append(leadingC + qhStr)
-        qhStr = '             <C-f>:Search <C-p>:Create File'
-        ret.append(leadingC + qhStr)
-        qhStr = '             <F2>:Rename  <F5>:Copy    <F6>:Move   '
-        ret.append(leadingC + qhStr)
-        qhStr = '             <F7>:Mkdir   <F8>:Delete   '
-        ret.append(leadingC + qhStr)
-        ret.append(leadingC + bar)
-        return ret
+    def getListing(self):
+        folders = []
+        files = []
+        for f in self.fileredFiles:
+            if(os.path.isdir(os.path.join(self.cwd, f))):
+                folders.append(f)
+            else:
+                files.append(f)
+        return {folders, files}

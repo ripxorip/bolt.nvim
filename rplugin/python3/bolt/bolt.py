@@ -33,16 +33,16 @@ class bolt(object):
     # Generic (explorer or searcher) commands
     # ==========================================
     def updateListing(self, pattern, commander):
-        pass
+        self.commanders[commander].updateListing(pattern)
 
     def getSelectedFile(self, commander):
-        pass
+        return self.commanders[commander].getSelected()
 
     def changeSelection(self, offset, commander):
-        pass
+        self.commanders[commander].changeSelection(offset)
 
     def getListing(self, commander):
-        pass
+        return self.commanders[commander].getListing()
 
     # ==========================================
     # Searcher exclusive commands
@@ -55,28 +55,34 @@ class bolt(object):
     # Explorer exclusive commands
     # ==========================================
     def move(self, dest, commander):
-        pass
+        self.commanders[commander].move(dest)
 
     def delete(self, commander):
-        pass
+        self.commanders[commander].delete()
 
-    def rename(self, commander):
-        pass
+    def rename(self, newName, commander):
+        self.commanders[commander].rename(newName)
 
     def copy(self, dest, commander):
-        pass
+        self.commanders[commander].copy(dest)
 
     def mkdir(self, name, commander):
-        pass
+        self.commanders[commander].mkdir(name)
 
     def createFile(self, name, commander):
-        pass
+        self.commanders[commander].createFile(name)
 
     # ==========================================
     # Explorer to explorer commands
     # ==========================================
+    # TBD
     def eToe_copy(self, commander):
         pass
 
+    # TBD
     def eToe_Move(self, commander):
         pass
+
+# ============================================================================
+# Helpers
+# ============================================================================
