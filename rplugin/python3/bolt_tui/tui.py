@@ -1,11 +1,11 @@
-import dummy_pane
+from bolt_tui.dummy_pane import dummy_pane
 
 class tui(object):
     panes = []
 
     def __init__(self):
-        self.panes.append(dummy_pane.dummy_pane(focused=True))
-        self.panes.append(dummy_pane.dummy_pane(focused=False))
+        self.panes.append(dummy_pane(focused=True))
+        self.panes.append(dummy_pane(focused=False))
 
         self.selected = 0
 
