@@ -3,7 +3,7 @@ class dummy_pane(object):
 
     buffer = ['file1','file2','file3','file4']
 
-    def __init__(self, focused=False):
+    def __init__(self, focused=False, width=20, height=10):
         self.focused = focused
 
     def cmd_up(self):

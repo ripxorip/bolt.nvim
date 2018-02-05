@@ -1,9 +1,14 @@
 from bolt_tui.dummy_pane import dummy_pane
+from math import floor
 
 class tui(object):
     panes = []
 
-    def __init__(self):
+    def __init__(self, width, height):
+        pane_width = floor((width - 2)/2)
+        self.pane_width = pane_width
+        self.height = height
+
         self.panes.append(dummy_pane(focused=True))
         self.panes.append(dummy_pane(focused=False))
 
@@ -21,13 +26,25 @@ class tui(object):
         self.panes[self.selected].set_focus(True)
 
     def get_panes(self):
-        left = self.panes[0].get_pane()
-        right = self.panes[1].get_pane()
+        left_pane = self.panes[0].get_pane()
+        right_pane = self.panes[1].get_pane()
+        width = self.pane_width
 
         buf = []
 
-        for i in range(0, len(left)):
-            str = left[i] + ' | ' + right[i]
+        for i in range(0, self.height):
+            if i < len(left_pane):
+                left = left_pane[i]
+            else:
+                left = ''
+
+            if i < len(right_pane):
+                right = right_pane[i]
+            else:
+                right = ''
+
+            str = left.ljust(width) + ' | ' + right.ljust(width)
+
             buf.append(str)
 
         return buf
