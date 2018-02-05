@@ -29,8 +29,10 @@ def main(stdscr):
     debug_line = curses.LINES - 1
 
     while True:
-
-        c = stdscr.getkey()
+        try:
+            c = stdscr.getkey()
+        except KeyboardInterrupt:
+            break
         stdscr.clear()
 
         if c == 'q':
