@@ -81,9 +81,34 @@ class searcher(object):
             filePattern = filePattern.replace('-t', '-g')
             self.command += "rg %s --files" % (filePattern)
         self.buffer[:] = []
-        # Below does not work for mac
-        # self.nvim.command("r !\"%s\"" % self.command)
-        # Verify that this works for Windows
+        self.nvim.command("r !%s" % self.command)
+        self.nvim.current.buffer = self.prevbuffer
+        self.createResultStructure()
+        self.getFileListFromResults()
+
+    def find(self, dir, pattern):
+        self.prevbuffer = self.nvim.current.buffer
+        self.nvim.current.buffer = self.buffer
+        self.nvim.command('setlocal filetype=vim_tc_search_result')
+        self.dir = dir
+        self.command = "cd %s && " % dir
+        self.command += "rg -g %s --files" % (pattern)
+        self.buffer[:] = []
+        self.nvim.command("r !%s" % self.command)
+        self.nvim.current.buffer = self.prevbuffer
+        self.createResultStructure()
+        self.getFileListFromResults()
+
+    def grep(self, dir, filePattern, pattern):
+        self.prevbuffer = self.nvim.current.buffer
+        self.nvim.current.buffer = self.buffer
+        self.nvim.command('setlocal filetype=vim_tc_search_result')
+        self.dir = dir
+        self.command = "cd %s && " % dir
+        if(filePattern is not ''):
+            filePattern = '-t' + filePattern
+        self.command += "rg %s %s --vimgrep" % (filePattern, pattern)
+        self.buffer[:] = []
         self.nvim.command("r !%s" % self.command)
         self.nvim.current.buffer = self.prevbuffer
         self.createResultStructure()

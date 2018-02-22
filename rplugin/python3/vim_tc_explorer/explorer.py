@@ -134,13 +134,13 @@ class explorer(object):
         ret.append(leadingC + 'Bolt for Neovim (alpha)')
         # Shall be highlighted
         ret.append(leadingC + '  $>' + self.cwd)
-        qhStr = '  Quik Help: <Ret>:Open   <C-q>:Quit   <C-s>:Set CWD'
+        qhStr = '  Quick Help: <Ret>:Open   <C-q>:Quit   <C-s>:Set CWD'
         ret.append(leadingC + qhStr)
-        qhStr = '             <C-f>:Search <C-p>:Create File'
+        qhStr = '              <C-f>:Find   <C-g>:Grep   <C-p>:New File'
         ret.append(leadingC + qhStr)
-        qhStr = '             <F2>:Rename  <F5>:Copy    <F6>:Move   '
+        qhStr = '              <F2>:Rename  <F5>:Copy    <F6>:Move   '
         ret.append(leadingC + qhStr)
-        qhStr = '             <F7>:Mkdir   <F8>:Delete   '
+        qhStr = '              <F7>:Mkdir   <F8>:Delete   '
         ret.append(leadingC + qhStr)
         ret.append(leadingC + bar)
         return ret

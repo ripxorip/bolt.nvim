@@ -77,7 +77,13 @@ class vim_tc_explorer(object):
         # Tab
         self.nvim.command("inoremap <buffer> <tab> <ESC>:TcExpTab<CR>")
         # Search
-        str = "inoremap <buffer> <C-f> <ESC>:TcSearch (-t/-g)file;(pattern): "
+        str = "inoremap <buffer> <C-b> <ESC>:TcSearch (-t/-g)file;(pattern): "
+        self.nvim.command(str)
+        # Find
+        str = "inoremap <buffer> <C-f> <ESC>:TcFind "
+        self.nvim.command(str)
+        # Grep
+        str = "inoremap <buffer> <C-g> <ESC>:TcGrep "
         self.nvim.command(str)
         # Set cwd
         self.nvim.command("inoremap <buffer> <C-s> <ESC>:TcSetCwd<CR>")
@@ -254,6 +260,42 @@ class vim_tc_explorer(object):
     def tc_set_cwd(self, args, range):
         exp = self.explorers[self.selectedExplorer]
         self.nvim.command("cd %s" % exp.cwd)
+        self.nvim.command('startinsert')
+        self.nvim.command('normal! $')
+
+    def tc_find(self, args, range):
+        """ The find command """
+        # Save the current explorer for restoration when the searcher finish
+        self.expSave = self.explorers[self.selectedExplorer]
+        # Replace the current explorer with a searcher and borrow its buffer
+        se = searcher(self.nvim, self.expSave.buffer, self.expSave.cwd)
+        se.window = self.expSave.window
+        # Perfor the search with the correct parameters
+        dir = self.expSave.cwd
+        se.find(dir, args[0])
+        self.explorers[self.selectedExplorer] = se
+        self.explorers[self.selectedExplorer].draw()
+        self.nvim.command('startinsert')
+        self.nvim.command('normal! $')
+
+    def tc_grep(self, args, range):
+        """ The grep command """
+        # Save the current explorer for restoration when the searcher finish
+        self.expSave = self.explorers[self.selectedExplorer]
+        # Replace the current explorer with a searcher and borrow its buffer
+        se = searcher(self.nvim, self.expSave.buffer, self.expSave.cwd)
+        se.window = self.expSave.window
+        # Perfor the search with the correct parameters
+        dir = self.expSave.cwd
+        filePattern = ""
+        if(len(args) > 1):
+            filePattern = args[0]
+            pattern = args[1]
+        else:
+            pattern = args[0]
+        se.grep(dir, filePattern, pattern)
+        self.explorers[self.selectedExplorer] = se
+        self.explorers[self.selectedExplorer].draw()
         self.nvim.command('startinsert')
         self.nvim.command('normal! $')
 
