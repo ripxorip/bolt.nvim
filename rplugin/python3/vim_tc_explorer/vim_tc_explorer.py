@@ -107,8 +107,8 @@ class vim_tc_explorer(object):
         self.nvim.command("inoremap <buffer> <F5> <ESC>:BoltCopy dest: ")
         self.nvim.command("inoremap <buffer> <F6> <ESC>:BoltMove name: ")
         self.nvim.command("inoremap <buffer> <F7> <ESC>:BoltMkdir name: ")
-        self.nvim.command("inoremap <buffer> <F8> <ESC>:BoltDelete Delete? ")
-
+        remapStr = "inoremap <buffer> <F8> <ESC>:BoltDelete Delete(y/n)? "
+        self.nvim.command(remapStr)
         remapStr = "inoremap <buffer> <C-p> <ESC>:BoltCreateFile name: "
         self.nvim.command(remapStr)
         # Close
