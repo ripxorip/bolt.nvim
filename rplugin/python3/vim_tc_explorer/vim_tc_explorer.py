@@ -246,7 +246,7 @@ class vim_tc_explorer(object):
         self.nvim.command('normal! $')
 
     def tc_close(self, args, range):
-        self.close()
+        self.close(False)
 
     def tc_set_cwd(self, args, range):
         exp = self.explorers[self.selectedExplorer]
