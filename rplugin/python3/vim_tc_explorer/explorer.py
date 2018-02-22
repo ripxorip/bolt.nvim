@@ -17,6 +17,8 @@ class explorer(object):
         self.cwd = cwd
         # The the current files
         self.currentFiles = os.listdir(self.cwd)
+        # Sort based on folders
+        self.sortFiles()
         self.fileredFiles = self.currentFiles[:]
         # Index that tracks which file that is selected
         self.selected = 0
@@ -25,6 +27,20 @@ class explorer(object):
         # The header takes up 9 rows
         self.headerLength = 9
 
+    def sortFiles(self):
+        ogFiles = []
+        ogFiles[:] = self.currentFiles[:]
+        self.currentFiles[:] = []
+        # First folders
+        for file in ogFiles:
+            if(os.path.isdir(os.path.abspath(os.path.join(self.cwd, file)))):
+                self.currentFiles.append(file)
+        # Then files
+        for file in ogFiles:
+            if(not os.path.isdir(os.path.abspath(os.path.join(self.cwd,
+                                                              file)))):
+                self.currentFiles.append(file)
+
     def assignBuffer(self, buffer):
         self.buffer = buffer
 
@@ -32,7 +48,6 @@ class explorer(object):
         explorer = self.buffer
         # New way of getting the header
         explorer[:] = self.getUIHeader()
-        # FIXME: Add coloring
         for idx, val in enumerate(self.fileredFiles):
             if idx == self.selected and self.active:
                 token = "-->"
@@ -86,7 +101,9 @@ class explorer(object):
     def cd(self, path):
         self.cwd = os.path.abspath(os.path.join(self.cwd, path))
         self.currentFiles = os.listdir(self.cwd)
+        self.sortFiles()
         self.fileredFiles = self.currentFiles[:]
+        self.selected = 0
         self.changeSelection(0)
 
     def updateListing(self, pattern):

@@ -85,7 +85,7 @@ class vim_tc_explorer(object):
         self.nvim.command("inoremap <buffer> <C-a> <ESC>:TcSearchToggle<CR>")
         # File operations
         #
-        # Original total commander shortcuts 
+        # Original total commander shortcuts
         # F1 - Help
         # F2 - Refresh (suggest to map it to rename)
         # F3 - List file content
@@ -141,6 +141,7 @@ class vim_tc_explorer(object):
         self.nvim.command("startinsert!")
         self.createKeyMap()
         # Draw first frame
+        self.explorers[self.selectedExplorer].updateListing("")
         self.explorers[self.selectedExplorer].draw()
 
     def tc_explore_dual(self, args, range):
@@ -183,6 +184,8 @@ class vim_tc_explorer(object):
         # Draw first frame
         self.explorers[0].active = True
         self.explorers[1].active = False
+        self.explorers[0].updateListing("")
+        self.explorers[1].updateListing("")
         self.explorers[0].draw()
         self.explorers[1].draw()
 
