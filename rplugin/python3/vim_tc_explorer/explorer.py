@@ -107,9 +107,17 @@ class explorer(object):
         self.changeSelection(0)
 
     def updateListing(self, pattern):
+        ret = 0
         self.pattern = pattern
+        filtCopy = []
+        filtCopy[:] = self.fileredFiles[:]
         self.filter.filter(self.currentFiles, pattern, self.fileredFiles)
+        if(len(self.fileredFiles) > 0):
+            ret = 1
+        else:
+            self.fileredFiles[:] = filtCopy[:]
         self.changeSelection(0)
+        return ret
 
     def changeSelection(self, offset):
         self.selected += offset

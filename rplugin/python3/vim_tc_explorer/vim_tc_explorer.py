@@ -85,6 +85,9 @@ class vim_tc_explorer(object):
         # Grep
         str = "inoremap <buffer> <C-g> <ESC>:TcGrep "
         self.nvim.command(str)
+        # Abort filter
+        str = "inoremap <buffer> <C-c> <ESC>:TcAbortFilter<CR>"
+        self.nvim.command(str)
         # Set cwd
         self.nvim.command("inoremap <buffer> <C-s> <ESC>:TcSetCwd<CR>")
         # Expand/Collapse search matches
@@ -141,10 +144,12 @@ class vim_tc_explorer(object):
         # Go back to the input buffer window
         self.nvim.command('wincmd j')
         # FIXME: Add one more line for quick help
-        self.nvim.current.window.height = 1
+        self.nvim.current.window.height = 2
         # Change to input buffer
         self.nvim.current.buffer = self.nvim.buffers[self.inputBufferNumber]
         self.nvim.command("startinsert!")
+        str = 'Help: <kbd> Filter pattern; <bs> Go to parent'
+        self.nvim.current.buffer.append(str)
         self.createKeyMap()
         # Draw first frame
         self.explorers[self.selectedExplorer].updateListing("")
@@ -182,10 +187,12 @@ class vim_tc_explorer(object):
         # Go back to the input buffer window
         self.nvim.command('wincmd j')
         # FIXME: Add one more line for quick help
-        self.nvim.current.window.height = 1
+        self.nvim.current.window.height = 2
         # Change to input buffer
         self.nvim.current.buffer = self.nvim.buffers[self.inputBufferNumber]
         self.nvim.command("startinsert!")
+        str = 'Help: <kbd> Filter pattern; <bs> Go to parent'
+        self.nvim.current.buffer.append(str)
         self.createKeyMap()
         # Draw first frame
         self.explorers[0].active = True
@@ -209,6 +216,7 @@ class vim_tc_explorer(object):
             # Clear the line
             self.nvim.current.line = ''
             self.nvim.command('startinsert')
+            self.abortFilter(None, None)
         else:
             filePath = os.path.join(exp.cwd, selFile)
             if(lineNum is not None):
@@ -371,10 +379,21 @@ class vim_tc_explorer(object):
         self.nvim.command('normal! $')
         exp.draw()
 
+    def abortFilter(self, args, range):
+        str = 'Help: <kbd> Filter pattern; <bs> Go to parent'
+        self.nvim.current.buffer[1] = str
+        self.nvim.current.buffer[0] = ""
+        self.nvim.command('startinsert')
+        exp = self.explorers[self.selectedExplorer]
+        exp.updateListing("")
+        exp.draw()
+
     def handle_input(self):
         """ Input handler for filter """
         exp = self.explorers[self.selectedExplorer]
         inputLine = self.nvim.current.line
+        if(inputLine is not "" and inputLine is not "%"):
+            self.nvim.current.buffer[1] = 'Filter active: (abort with <c-c>)'
         # Check for backspace
         if inputLine.endswith('%'):
             inputLine = inputLine.replace("%", "")
@@ -388,24 +407,14 @@ class vim_tc_explorer(object):
                     self.nvim.current.buffer = exp.buffer
                     self.nvim.command('setlocal filetype=vim_tc_explorer')
                     self.nvim.current.buffer = prevbuffer
-                else:
+                elif (not self.nvim.current.buffer[1] ==
+                        'Filter active: (abort with <c-c>)'):
                     # Change directory to the parrent
                     exp.cd('..')
             inputLine = inputLine[:-1]
-        # FIXME: These matches shall be commands instead, just like for "enter"
-        elif inputLine.endswith('!'):
-            inputLine = inputLine.replace("!", "")
-            # Handle selection up
-            exp.changeSelection(-1)
-        elif inputLine.endswith('@'):
-            inputLine = inputLine.replace("@", "")
-            # Handle selection down
-            exp.changeSelection(1)
-        elif inputLine.endswith('?'):
-            # Close
-            self.close(False)
-            return
+        # Check if we still have matches
+        if(0 == exp.updateListing(inputLine)):
+            inputLine = inputLine[:-1]
         self.nvim.current.line = inputLine
-        exp.updateListing(inputLine)
         # Draw
         exp.draw()
