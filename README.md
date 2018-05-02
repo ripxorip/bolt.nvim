@@ -28,7 +28,7 @@ Unleash the commander using the multi-pane mode.
 #### Notice
 
 The development of Bolt.nvim is still in a **very early phase**, so bugs are expected. 
-If you find something that needs fixing, please create an issue.
+If you find something that needs fixing please create an issue.
 
 ## Installation
 
