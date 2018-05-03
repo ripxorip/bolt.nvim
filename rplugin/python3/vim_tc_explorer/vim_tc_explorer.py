@@ -289,6 +289,8 @@ class vim_tc_explorer(object):
         self.explorers[self.selectedExplorer].draw()
         self.nvim.command('startinsert')
         self.nvim.command('normal! $')
+        str = 'Help: <kbd> Filter pattern; <bs> Go to parent'
+        self.nvim.current.buffer.append(str)
 
     def tc_grep(self, args, range):
         """ The grep command """
@@ -297,7 +299,7 @@ class vim_tc_explorer(object):
         # Replace the current explorer with a searcher and borrow its buffer
         se = searcher(self.nvim, self.expSave.buffer, self.expSave.cwd)
         se.window = self.expSave.window
-        # Perfor the search with the correct parameters
+        # Perform the search with the correct parameters
         dir = self.expSave.cwd
         filePattern = ""
         if(len(args) > 1):
@@ -310,6 +312,8 @@ class vim_tc_explorer(object):
         self.explorers[self.selectedExplorer].draw()
         self.nvim.command('startinsert')
         self.nvim.command('normal! $')
+        str = 'Help: <kbd> Filter pattern; <bs> Go to parent'
+        self.nvim.current.buffer.append(str)
 
     def tc_search(self, args, range):
         """ Search patterns comes from command line """
@@ -330,6 +334,8 @@ class vim_tc_explorer(object):
         self.explorers[self.selectedExplorer].draw()
         self.nvim.command('startinsert')
         self.nvim.command('normal! $')
+        str = 'Help: <kbd> Filter pattern; <bs> Go to parent'
+        self.nvim.current.buffer.append(str)
 
     def tc_search_toggle(self, args, range):
         exp = self.explorers[self.selectedExplorer]
@@ -402,7 +408,8 @@ class vim_tc_explorer(object):
         if inputLine.endswith('%'):
             inputLine = inputLine.replace("%", "")
             # Handle backspace
-            if not inputLine:
+            if not inputLine and (not self.nvim.current.buffer[1] ==
+                                  'Filter active: (abort with <c-c>)'):
                 if(exp.isSearcher):
                     # Restore
                     self.explorers[self.selectedExplorer] = self.expSave
@@ -413,8 +420,7 @@ class vim_tc_explorer(object):
                     self.nvim.current.buffer = prevbuffer
                     str = 'Help: <kbd> Filter pattern; <bs> Go to parent'
                     self.nvim.current.buffer.append(str)
-                elif (not self.nvim.current.buffer[1] ==
-                        'Filter active: (abort with <c-c>)'):
+                else:
                     # Change directory to the parrent
                     exp.cd('..')
             inputLine = inputLine[:-1]

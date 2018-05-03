@@ -161,7 +161,8 @@ class searcher(object):
         leadingC = '#'
         ret = []
         ret.append(leadingC + bar)
-        ret.append(leadingC + 'Bolt search results')
+        ret.append(leadingC + ' Bolt search results (%d results)' %
+                   len(self.fileList))
         # Shall be highlighted
         ret.append(leadingC + '  $>' + self.command)
         qhStr = '  Quik Help: <Ret>:Open <C-a>:Expand <C-q>:Quit'

@@ -139,7 +139,8 @@ class explorer(object):
             leadingC = '" '
         ret = []
         ret.append(leadingC + bar)
-        ret.append(leadingC + 'Bolt for Neovim (alpha)')
+        ret.append(leadingC + 'Bolt for Neovim (%d files)' %
+                   len(self.fileredFiles))
         # Shall be highlighted
         ret.append(leadingC + '  $>' + self.cwd)
         qhStr = '  Quick Help: <Ret>:Open   <C-q>:Quit   <C-s>:Set CWD'
