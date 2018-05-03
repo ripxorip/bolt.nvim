@@ -3,6 +3,7 @@
 # AUTHOR: Philip Karlsson <philipkarlsson at me.com>
 # License: MIT license
 # ============================================================================
+import neovim
 import os
 from vim_tc_explorer.explorer import explorer
 from vim_tc_explorer.searcher import searcher
@@ -218,13 +219,16 @@ class vim_tc_explorer(object):
             self.nvim.command('startinsert')
             self.abortFilter(None, None)
         else:
-            filePath = os.path.join(exp.cwd, selFile)
-            if(lineNum is not None):
-                # Would be nice to go to zz at the same time
-                self.nvim.command('e +%d %s' % (lineNum,
-                                                os.path.abspath(filePath)))
-            else:
-                self.nvim.command('e %s' % os.path.abspath(filePath))
+            try:
+                filePath = os.path.join(exp.cwd, selFile)
+                if(lineNum is not None):
+                    # Would be nice to go to zz at the same time
+                    self.nvim.command('e +%d %s' % (lineNum,
+                                                    os.path.abspath(filePath)))
+                else:
+                    self.nvim.command('e %s' % os.path.abspath(filePath))
+            except neovim.api.nvim.NvimError as err:
+                print("Error/possibly warning opening file")
             self.close()
             return
 
