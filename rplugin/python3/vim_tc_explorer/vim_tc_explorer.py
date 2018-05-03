@@ -411,6 +411,8 @@ class vim_tc_explorer(object):
                     self.nvim.current.buffer = exp.buffer
                     self.nvim.command('setlocal filetype=vim_tc_explorer')
                     self.nvim.current.buffer = prevbuffer
+                    str = 'Help: <kbd> Filter pattern; <bs> Go to parent'
+                    self.nvim.current.buffer.append(str)
                 elif (not self.nvim.current.buffer[1] ==
                         'Filter active: (abort with <c-c>)'):
                     # Change directory to the parrent
