@@ -446,6 +446,7 @@ class vim_tc_explorer(object):
                                   'Filter active: (abort with <c-c>)'):
                 if(exp.isSearcher):
                     # Restore
+                    self.expSave.window = exp.window
                     self.explorers[self.selectedExplorer] = self.expSave
                     exp = self.explorers[self.selectedExplorer]
                     prevbuffer = self.nvim.current.buffer
