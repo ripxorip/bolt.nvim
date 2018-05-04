@@ -34,6 +34,14 @@ class VimTcExplorerHandlers(object):
     def tc_down(self, args, range):
         self.TcExplorer.tc_down(args, range)
 
+    @neovim.command("BoltPgUp", range='', nargs='*', sync=True)
+    def pg_up(self, args, range):
+        self.TcExplorer.pg_up(args, range)
+
+    @neovim.command("BoltPgDown", range='', nargs='*', sync=True)
+    def pg_down(self, args, range):
+        self.TcExplorer.pg_down(args, range)
+
     @neovim.command("TcExpClose", range='', nargs='*', sync=True)
     def tc_close(self, args, range):
         self.TcExplorer.tc_close(args, range)

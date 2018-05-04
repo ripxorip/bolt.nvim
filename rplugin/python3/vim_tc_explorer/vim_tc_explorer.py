@@ -75,6 +75,10 @@ class vim_tc_explorer(object):
         # Down
         self.nvim.command("inoremap <buffer> <C-j> <ESC>:TcExpDown<CR>")
         self.nvim.command("inoremap <buffer> <Down> <ESC>:TcExpDown<CR>")
+        # Pg Up
+        self.nvim.command("inoremap <buffer> <C-u> <ESC>:BoltPgUp<CR>")
+        # Pg Down
+        self.nvim.command("inoremap <buffer> <C-d> <ESC>:BoltPgDown<CR>")
         # Tab
         self.nvim.command("inoremap <buffer> <tab> <ESC>:TcExpTab<CR>")
         # Search
@@ -234,19 +238,49 @@ class vim_tc_explorer(object):
 
     def tc_up(self, args, range):
         exp = self.explorers[self.selectedExplorer]
+        oldSel = exp.selected
         exp.changeSelection(-1)
-        exp.draw()
         exp.window.cursor = (exp.selected + exp.headerLength, 0)
-        self.winCmd(exp.window, 'normal! zz')
+        ind = oldSel + exp.headerLength - 1
+        exp.buffer[ind] = exp.buffer[ind].replace("-->", "   ")
+        ind = exp.selected + exp.headerLength - 1
+        exp.buffer[ind] = exp.buffer[ind].replace("   ", "-->")
         self.nvim.command('startinsert')
         self.nvim.command('normal! $')
 
     def tc_down(self, args, range):
         exp = self.explorers[self.selectedExplorer]
+        oldSel = exp.selected
         exp.changeSelection(1)
-        exp.draw()
         exp.window.cursor = (exp.selected + exp.headerLength, 0)
-        self.winCmd(exp.window, 'normal! zz')
+        ind = oldSel + exp.headerLength - 1
+        exp.buffer[ind] = exp.buffer[ind].replace("-->", "   ")
+        ind = exp.selected + exp.headerLength - 1
+        exp.buffer[ind] = exp.buffer[ind].replace("   ", "-->")
+        self.nvim.command('startinsert')
+        self.nvim.command('normal! $')
+
+    def pg_up(self, args, range):
+        exp = self.explorers[self.selectedExplorer]
+        oldSel = exp.selected
+        exp.changeSelection(-20)
+        exp.window.cursor = (exp.selected + exp.headerLength, 0)
+        ind = oldSel + exp.headerLength - 1
+        exp.buffer[ind] = exp.buffer[ind].replace("-->", "   ")
+        ind = exp.selected + exp.headerLength - 1
+        exp.buffer[ind] = exp.buffer[ind].replace("   ", "-->")
+        self.nvim.command('startinsert')
+        self.nvim.command('normal! $')
+
+    def pg_down(self, args, range):
+        exp = self.explorers[self.selectedExplorer]
+        oldSel = exp.selected
+        exp.changeSelection(20)
+        exp.window.cursor = (exp.selected + exp.headerLength, 0)
+        ind = oldSel + exp.headerLength - 1
+        exp.buffer[ind] = exp.buffer[ind].replace("-->", "   ")
+        ind = exp.selected + exp.headerLength - 1
+        exp.buffer[ind] = exp.buffer[ind].replace("   ", "-->")
         self.nvim.command('startinsert')
         self.nvim.command('normal! $')
 
@@ -430,3 +464,4 @@ class vim_tc_explorer(object):
         self.nvim.current.line = inputLine
         # Draw
         exp.draw()
+        exp.window.cursor = (exp.selected + exp.headerLength, 0)
