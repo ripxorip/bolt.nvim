@@ -463,5 +463,6 @@ class vim_tc_explorer(object):
             inputLine = inputLine[:-1]
         self.nvim.current.line = inputLine
         # Draw
+        exp.selected = 0
         exp.draw()
         exp.window.cursor = (exp.selected + exp.headerLength, 0)
