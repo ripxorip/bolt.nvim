@@ -466,4 +466,5 @@ class vim_tc_explorer(object):
         # Draw
         exp.selected = 0
         exp.draw()
-        exp.window.cursor = (exp.selected + exp.headerLength, 0)
+        if(len(exp.fileredFiles) != 0):
+            exp.window.cursor = (exp.selected + exp.headerLength, 0)
