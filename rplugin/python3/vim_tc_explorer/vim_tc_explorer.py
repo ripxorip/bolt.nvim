@@ -160,6 +160,11 @@ class vim_tc_explorer(object):
         self.explorers[self.selectedExplorer].updateListing("")
         self.explorers[self.selectedExplorer].draw()
 
+    def tc_explore_cwd(self, args, range):
+        exp = self.explorers[self.selectedExplorer]
+        exp.cd(os.getcwd())
+        self.tc_explore(args, range)
+
     def tc_explore_dual(self, args, range):
         """ Single pane explorer """
         self.numExplorers = 2

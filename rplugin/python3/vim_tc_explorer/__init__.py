@@ -18,6 +18,10 @@ class VimTcExplorerHandlers(object):
     def tc_explore(self, args, range):
         self.TcExplorer.tc_explore(args, range)
 
+    @neovim.command("TcCwd", range='', nargs='*', sync=True)
+    def tc_explore_cwd(self, args, range):
+        self.TcExplorer.tc_explore_cwd(args, range)
+
     @neovim.command("Tcd", range='', nargs='*', sync=True)
     def tc_explore_dual(self, args, range):
         self.TcExplorer.tc_explore_dual(args, range)
