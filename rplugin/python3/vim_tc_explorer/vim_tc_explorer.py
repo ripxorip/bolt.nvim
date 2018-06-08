@@ -162,7 +162,7 @@ class vim_tc_explorer(object):
 
     def tc_explore_cwd(self, args, range):
         exp = self.explorers[self.selectedExplorer]
-        exp.cd(os.getcwd())
+        exp.cd(self.cwd)
         self.tc_explore(args, range)
 
     def tc_explore_dual(self, args, range):
@@ -310,6 +310,7 @@ class vim_tc_explorer(object):
 
     def tc_set_cwd(self, args, range):
         exp = self.explorers[self.selectedExplorer]
+        self.cwd = exp.cwd
         self.nvim.command("cd %s" % exp.cwd)
         self.nvim.command('startinsert')
         self.nvim.command('normal! $')
