@@ -157,6 +157,8 @@ class vim_tc_explorer(object):
         self.nvim.current.buffer.append(str)
         self.createKeyMap()
         # Draw first frame
+        # Refresh the current directory listing first
+        self.explorers[self.selectedExplorer].refreshListing()
         self.explorers[self.selectedExplorer].updateListing("")
         self.explorers[self.selectedExplorer].draw()
 

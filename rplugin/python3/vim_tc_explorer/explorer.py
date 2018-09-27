@@ -106,6 +106,9 @@ class explorer(object):
         self.selected = 0
         self.changeSelection(0)
 
+    def refreshListing(self):
+        self.currentFiles = os.listdir(self.cwd)
+
     def updateListing(self, pattern):
         ret = 0
         self.pattern = pattern
