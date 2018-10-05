@@ -158,7 +158,8 @@ class vim_tc_explorer(object):
         self.createKeyMap()
         # Draw first frame
         # Refresh the current directory listing first
-        self.explorers[self.selectedExplorer].refreshListing()
+        if not self.explorers[self.selectedExplorer].isSearcher:
+            self.explorers[self.selectedExplorer].refreshListing()
         self.explorers[self.selectedExplorer].updateListing("")
         self.explorers[self.selectedExplorer].draw()
 
