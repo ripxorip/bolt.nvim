@@ -31,6 +31,8 @@ syntax match editable ".*\.xsl$"
 syntax match editable ".*\.mk$"
 syntax match editable "Makefile"
 
+syntax match selection "<-{.*$"
+
 syntax match commands "-->.*"
 highlight link commands Statement
 highlight link folder Keyword
@@ -38,5 +40,6 @@ highlight link marker Number
 highlight link path Debug
 highlight link editable Debug
 highlight link _comment comment
+highlight link selection String
 
 let b:current_syntax = "vim_tc_explorer"
