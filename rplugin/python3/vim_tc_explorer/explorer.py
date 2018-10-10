@@ -26,6 +26,7 @@ class explorer(object):
         self.pattern = ''
         # The header takes up 9 rows
         self.headerLength = 9
+        self.markers = []
 
     def sortFiles(self):
         ogFiles = []
@@ -53,11 +54,16 @@ class explorer(object):
                 token = "-->"
             else:
                 token = "   "
+            baseStr = val
+            # This is shall be calculated from the unfilteres files.. cont here
+            if self.isMarked(val):
+                baseStr = '<-{' + val + '}->'
             if(os.path.isdir(os.path.abspath(os.path.join(self.cwd, val)))):
                 # Folder
-                explorer.append(token + ' +' + val + '/')
+                lineStr = token + ' +' + baseStr + '/'
             else:
-                explorer.append(token + '  ' + val)
+                lineStr = token + '  ' + baseStr
+            explorer.append(lineStr)
 
     def rename(self, newName):
         os.rename(self.getSelected()[0], os.path.join(self.cwd, newName))
@@ -105,6 +111,7 @@ class explorer(object):
         self.fileredFiles = self.currentFiles[:]
         self.selected = 0
         self.changeSelection(0)
+        self.clearMarkers()
 
     def refreshListing(self):
         self.currentFiles = os.listdir(self.cwd)
@@ -120,6 +127,23 @@ class explorer(object):
         else:
             self.fileredFiles[:] = filtCopy[:]
         self.changeSelection(0)
+        return ret
+
+    def clearMarkers(self):
+        self.markers = []
+
+    def addMarker(self, index):
+        # Operate on file
+        self.markers.append(self.fileredFiles[index])
+
+    def removeMarker(self, index):
+        # Operate on file instead of index
+        self.markers.remove(self.fileredFiles[index])
+
+    def isMarked(self, val):
+        ret = False
+        if val in self.markers:
+            ret = True
         return ret
 
     def changeSelection(self, offset):

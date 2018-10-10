@@ -404,6 +404,14 @@ class vim_tc_explorer(object):
         self.nvim.command('normal! $')
         exp.draw()
 
+    def toggleMark(self, args, range):
+        exp = self.explorers[self.selectedExplorer]
+        if exp.isMarked(exp.fileredFiles[exp.selected]):
+            exp.removeMarker(exp.selected)
+        else:
+            exp.addMarker(exp.selected)
+        exp.draw()
+
     def rename(self, args, range):
         exp = self.explorers[self.selectedExplorer]
         exp.rename(args[1])
@@ -448,6 +456,19 @@ class vim_tc_explorer(object):
         """ Input handler for filter """
         exp = self.explorers[self.selectedExplorer]
         inputLine = self.nvim.current.line
+        # Handle space for the markers
+        if inputLine == " ":
+            self.nvim.current.line = ""
+            self.toggleMark(None, None)
+            self.tc_down(None, None)
+            return
+        elif inputLine.endswith(" "):
+            self.toggleMark(None, None)
+            self.tc_down(None, None)
+            withoutSpace = self.nvim.current.line[:-1]
+            self.nvim.current.line = withoutSpace
+            return
+
         if(inputLine is not "" and inputLine is not "%"):
             self.nvim.current.buffer[1] = 'Filter active: (abort with <c-c>)'
         # Check for backspace
