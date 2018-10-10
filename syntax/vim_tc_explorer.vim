@@ -33,7 +33,7 @@ syntax match editable "Makefile"
 
 syntax match selection "<-{.*$"
 
-syntax match commands "-->.*"
+syntax match commands "-->"
 highlight link commands Statement
 highlight link folder Keyword
 highlight link marker Number
