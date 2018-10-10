@@ -253,6 +253,8 @@ class vim_tc_explorer(object):
         exp.buffer[ind] = exp.buffer[ind].replace("-->", "   ")
         ind = exp.selected + exp.headerLength - 1
         exp.buffer[ind] = exp.buffer[ind].replace("   ", "-->")
+        if(exp.selected == 0):
+            self.winCmd(exp.window, 'normal! zz')
         self.nvim.command('startinsert')
         self.nvim.command('normal! $')
 
@@ -272,6 +274,8 @@ class vim_tc_explorer(object):
         exp = self.explorers[self.selectedExplorer]
         oldSel = exp.selected
         exp.changeSelection(-20)
+        if(exp.selected == 0):
+            self.winCmd(exp.window, 'normal! zz')
         exp.window.cursor = (exp.selected + exp.headerLength, 0)
         ind = oldSel + exp.headerLength - 1
         exp.buffer[ind] = exp.buffer[ind].replace("-->", "   ")
