@@ -129,6 +129,11 @@ class explorer(object):
         elif self.selected >= len(self.fileredFiles):
             self.selected = len(self.fileredFiles)-1
 
+    def setSelectionWithName(self, name):
+        for counter, entry in enumerate(self.fileredFiles):
+            if name == entry:
+                self.selected = counter
+
     def getSelected(self):
         pathToFile = os.path.join(self.cwd, self.fileredFiles[self.selected])
         return pathToFile, None

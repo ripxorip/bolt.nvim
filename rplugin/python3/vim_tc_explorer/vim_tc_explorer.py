@@ -430,7 +430,10 @@ class vim_tc_explorer(object):
         exp.createFile(args[1])
         self.nvim.command('startinsert')
         self.nvim.command('normal! $')
+        # Set the new file as selected
+        exp.setSelectionWithName(args[1])
         exp.draw()
+        self.tc_enter(None, None)
 
     def abortFilter(self, args, range):
         str = 'Help: <kbd> Filter pattern; <bs> Go to parent'
