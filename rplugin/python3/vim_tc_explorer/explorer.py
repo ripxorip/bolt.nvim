@@ -55,15 +55,16 @@ class explorer(object):
             else:
                 token = "   "
             baseStr = val
-            # This is shall be calculated from the unfilteres files.. cont here
-            if self.isMarked(val):
-                baseStr = '<-{' + val + '}->'
             if(os.path.isdir(os.path.abspath(os.path.join(self.cwd, val)))):
                 # Folder
-                lineStr = token + ' +' + baseStr + '/'
+                lineStr = '+' + val + '/'
             else:
-                lineStr = token + '  ' + baseStr
-            explorer.append(lineStr)
+                lineStr = val
+            if self.isMarked(val):
+                baseStr = token + '<-{' + lineStr + '}->'
+            else:
+                baseStr = token + ' ' + lineStr
+            explorer.append(baseStr)
 
     def rename(self, newName):
         os.rename(self.getSelected()[0], os.path.join(self.cwd, newName))
