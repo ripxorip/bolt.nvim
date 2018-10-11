@@ -5,6 +5,7 @@
 # ============================================================================
 
 import neovim
+import vim_tc_explorer.logger
 from vim_tc_explorer.vim_tc_explorer import vim_tc_explorer
 
 
@@ -12,11 +13,15 @@ from vim_tc_explorer.vim_tc_explorer import vim_tc_explorer
 class VimTcExplorerHandlers(object):
     def __init__(self, nvim):
         self.nvim = nvim
+        # Enable logging
+        logger.init_log(True)
         self.TcExplorer = vim_tc_explorer(nvim, log=False)
+        logger.log('Plugin Initialized')
 
     @neovim.command("Tc", range='', nargs='*', sync=True)
     def tc_explore(self, args, range):
         self.TcExplorer.tc_explore(args, range)
+        logger.log('Tc called')
 
     @neovim.command("TcCwd", range='', nargs='*', sync=True)
     def tc_explore_cwd(self, args, range):
@@ -85,6 +90,10 @@ class VimTcExplorerHandlers(object):
     @neovim.command("BoltToggleMark", range='', nargs='*', sync=True)
     def bolt_toggle_mark(self, args, range):
         self.TcExplorer.toggleMark(args, range)
+
+    @neovim.command("BoltDisplayLog", range='', nargs='*', sync=True)
+    def bolt_display_log(self, args, range):
+        logger.display(self.nvim)
 
     @neovim.command("TcSearch", range='', nargs='*', sync=True)
     def tc_search(self, args, range):
