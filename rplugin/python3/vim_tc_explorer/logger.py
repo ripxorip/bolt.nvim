@@ -18,6 +18,8 @@ def entry_with_ts(data):
 
 def init_log(_log):
     global logparam
+    global logstr
+    logstr.append('=== Bolt Log ===')
     logparam= _log
 
 def display(nvim):

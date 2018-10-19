@@ -15,13 +15,13 @@ class VimTcExplorerHandlers(object):
         self.nvim = nvim
         # Enable logging
         logger.init_log(True)
-        self.TcExplorer = vim_tc_explorer(nvim, log=False)
+        self.TcExplorer = vim_tc_explorer(nvim)
         logger.log('Plugin Initialized')
 
     @neovim.command("Tc", range='', nargs='*', sync=True)
     def tc_explore(self, args, range):
         self.TcExplorer.tc_explore(args, range)
-        logger.log('Tc called')
+        logger.log('Explorer Spawned')
 
     @neovim.command("TcCwd", range='', nargs='*', sync=True)
     def tc_explore_cwd(self, args, range):

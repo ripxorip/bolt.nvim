@@ -13,16 +13,8 @@ class vim_tc_explorer(object):
     """ Main class for the plugin, manages
         the input commands and the spawning of
         explorers """
-    def __init__(self, nvim, log=False):
+    def __init__(self, nvim):
         self.nvim = nvim
-        # Setup debugging
-        self.useLogging = log
-        if(self.useLogging):
-            self.nvim.command('e TC_Debug')
-            self.logBuffer = self.nvim.current.buffer
-            self.nvim.command('setlocal buftype=nofile')
-            self.nvim.command('setlocal filetype=vim_tc_input')
-            self.nvim.command('normal! bn')
         # Start the explorer in cwd
         self.cwd = os.path.abspath(os.getcwd())
         # Create both explorers but only show one depending on cmd?
@@ -35,10 +27,6 @@ class vim_tc_explorer(object):
 # ============================================================================
 # Helpers
 # ============================================================================
-    def log(self, msg):
-        if(self.useLogging):
-            self.logBuffer.append(msg)
-
     def bufCmd(self, buffer, cmd):
         prevbuffer = self.nvim.current.buffer
         self.nvim.current.buffer = buffer
