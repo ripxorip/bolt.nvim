@@ -110,6 +110,12 @@ class vim_tc_explorer(object):
         # Close
         self.nvim.command("inoremap <buffer> <C-q> <ESC>:TcExpClose<CR>")
 
+    def python_input(self, message = 'input'):
+        self.nvim.command('call inputsave()')
+        self.nvim.command("let user_input = input('" + message + ": ')")
+        self.nvim.command('call inputrestore()')
+        return self.nvim.eval('user_input')
+
 # ============================================================================
 # Commands
 # ============================================================================
@@ -462,6 +468,12 @@ class vim_tc_explorer(object):
         # ogCmdTxt = self.nvim.current.line 
         # self.nvim.current.line = 'Paste all these items? y/n'
         # cont. here
+        # This works!!
+        # Would like to do this operation in the explorer but
+        # that would imply having neovim code in the explorer.py
+        # and I don't whant that!
+        test = self.python_input('Paste this file?')
+        log(test)
         self.nvim.command('startinsert')
         self.nvim.command('normal! $')
 
