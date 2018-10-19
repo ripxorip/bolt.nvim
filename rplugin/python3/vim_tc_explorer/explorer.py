@@ -5,6 +5,7 @@
 # ============================================================================
 import os
 import shutil
+from vim_tc_explorer.logger import log, log_list
 from vim_tc_explorer.filter import filter
 
 
@@ -71,14 +72,16 @@ class explorer(object):
         self.cd('.')
         self.updateListing(self.pattern)
 
-    def copy(self, dest):
-        selFile = self.getSelected()[0]
-        if os.path.isdir(selFile):
-            shutil.copytree(selFile, dest)
-        else:
-            shutil.copy(selFile, dest)
-        self.cd('.')
-        self.updateListing(self.pattern)
+    def get_markers_as_string(self):
+        # Add the files that shall be copied to clipboard
+        # returns a string that constitutes the clipboard
+        # which can be set in the host environment
+        ret = ''
+        for it in self.markers[:-1]:
+            # If someone has this in their path its their problem :)
+            ret += os.path.join(self.cwd, it) + '_{%boltSplitter%}_'
+        ret += os.path.join(self.cwd, self.markers[len(self.markers)-1])
+        return ret
 
     def delete(self, yesno):
         if yesno == "y":

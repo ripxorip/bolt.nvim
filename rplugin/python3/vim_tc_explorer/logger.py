@@ -33,4 +33,13 @@ def log(data):
     global logparam
     global logstr
     if logparam:
-        logstr.append(entry_with_ts(data))
+        logstr.append(entry_with_ts(data.strip('\n')))
+
+def log_list(data):
+    global logparam
+    global logstr
+    resStr = ''
+    for it in data:
+        resStr += str(it) + ' | '
+    if logparam:
+        logstr.append(entry_with_ts(resStr))

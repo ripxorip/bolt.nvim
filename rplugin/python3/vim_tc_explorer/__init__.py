@@ -75,6 +75,10 @@ class VimTcExplorerHandlers(object):
     def bolt_copy(self, args, range):
         self.TcExplorer.copy(args, range)
 
+    @neovim.command("BoltPaste", range='', nargs='*', sync=True)
+    def bolt_paste(self, args, range):
+        self.TcExplorer.paste(args, range)
+
     @neovim.command("BoltMkdir", range='', nargs='*', sync=True)
     def bolt_mkdir(self, args, range):
         self.TcExplorer.mkdir(args, range)

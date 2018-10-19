@@ -5,6 +5,8 @@
 # ============================================================================
 import neovim
 import os
+import re
+from vim_tc_explorer.logger import log, log_list
 from vim_tc_explorer.explorer import explorer
 from vim_tc_explorer.searcher import searcher
 
@@ -97,7 +99,8 @@ class vim_tc_explorer(object):
         # F7 - Create directory
         # F8 - Delete file
         self.nvim.command("inoremap <buffer> <F2> <ESC>:BoltRename name: ")
-        self.nvim.command("inoremap <buffer> <F5> <ESC>:BoltCopy dest: ")
+        self.nvim.command("inoremap <buffer> <C-c> <ESC>:BoltCopy<CR>")
+        self.nvim.command("inoremap <buffer> <C-v> <ESC>:BoltPaste<CR>")
         self.nvim.command("inoremap <buffer> <F6> <ESC>:BoltMove name: ")
         self.nvim.command("inoremap <buffer> <F7> <ESC>:BoltMkdir name: ")
         remapStr = "inoremap <buffer> <F8> <ESC>:BoltDelete Delete(y/n)? "
@@ -411,12 +414,56 @@ class vim_tc_explorer(object):
         self.nvim.command('normal! $')
         exp.draw()
 
-    def copy(self, args, range):
+    def cut(self, args, range):
+        log('cut')
+        # Get the selected files to clipboard
         exp = self.explorers[self.selectedExplorer]
-        exp.copy(args[1])
+        cb = exp.get_markers_as_string()
+        # This way it is consistent between different instances
+        # of bolt => will be nice for the refactoring of
+        # multiple panes :)
+        # Add operation type (copy/move) as prefix
+        self.nvim.command("let g:BoltCb = '%s'" % ('mv#' + cb))
         self.nvim.command('startinsert')
         self.nvim.command('normal! $')
-        exp.draw()
+
+    def copy(self, args, range):
+        log('copy')
+        # Get the selected files to clipboard
+        exp = self.explorers[self.selectedExplorer]
+        cb = exp.get_markers_as_string()
+        # This way it is consistent between different instances
+        # of bolt => will be nice for the refactoring of
+        # multiple panes :)
+        # Add operation type (copy/move) as prefix
+        self.nvim.command("let g:BoltCb = '%s'" % ('cp#' + cb))
+        self.nvim.command('startinsert')
+        self.nvim.command('normal! $')
+
+    def paste(self, args, range):
+        log('paste')
+        rawCb = self.nvim.command_output('silent echo g:BoltCb')
+        rawCb = rawCb.strip('\n')
+        # Get opcode
+        p = re.compile('^(.*?)\#')
+        op = p.findall(rawCb)[0]
+        # Opcode now in op
+        log('Operation')
+        log(op)
+        rawCb = re.sub(r'^.*\#', '', rawCb)
+        # Parse the raw clipboard and recreate the list
+        cb = rawCb.split('_{%boltSplitter%}_')
+        log('files:')
+        log_list(cb)
+        # cb now contain all the files in the clipboard
+        # Now lets copy file by file or folder by folder
+        # How do I do a prompt? Can I use Vim prompt instead?
+        # Would be nicer to use vim script and get the result
+        # ogCmdTxt = self.nvim.current.line 
+        # self.nvim.current.line = 'Paste all these items? y/n'
+        # cont. here
+        self.nvim.command('startinsert')
+        self.nvim.command('normal! $')
 
     def mkdir(self, args, range):
         exp = self.explorers[self.selectedExplorer]
