@@ -81,7 +81,7 @@ class vim_tc_explorer(object):
         str = "inoremap <buffer> <C-g> <ESC>:TcGrep "
         self.nvim.command(str)
         # Abort filter
-        str = "inoremap <buffer> <C-c> <ESC>:TcAbortFilter<CR>"
+        str = "inoremap <buffer> <C-w> <ESC>:TcAbortFilter<CR>"
         self.nvim.command(str)
         # Set cwd
         self.nvim.command("inoremap <buffer> <C-s> <ESC>:TcSetCwd<CR>")
@@ -465,7 +465,10 @@ class vim_tc_explorer(object):
         # Now lets copy file by file or folder by folder
         # How do I do a prompt? Can I use Vim prompt instead?
         # Would be nicer to use vim script and get the result
-        # ogCmdTxt = self.nvim.current.line 
+        # (new idea is to use the bolt cmd line as info of which
+        # file that is currently being copied?)
+        # sort of like a progressbar
+        ogCmdTxt = self.nvim.current.line 
         # self.nvim.current.line = 'Paste all these items? y/n'
         # cont. here
         # This works!!
@@ -521,7 +524,7 @@ class vim_tc_explorer(object):
             return
 
         if(inputLine is not "" and inputLine is not "%"):
-            self.nvim.current.buffer[1] = 'Filter active: (abort with <c-c>)'
+            self.nvim.current.buffer[1] = 'Filter active: (abort with <c-w>)'
         # Check for backspace
         if inputLine.endswith('%'):
             inputLine = inputLine.replace("%", "")
