@@ -6,7 +6,7 @@
 import neovim
 import os
 import re
-from vim_tc_explorer.copy import copy
+from vim_tc_explorer.copy import CopyUtilitiy
 from vim_tc_explorer.logger import log, log_list
 from vim_tc_explorer.explorer import explorer
 from vim_tc_explorer.searcher import searcher
@@ -20,6 +20,7 @@ class vim_tc_explorer(object):
     def __init__(self, nvim):
         self.nvim = nvim
         init_utils(nvim)
+        self.copyUtil = CopyUtilitiy(nvim)
         # Start the explorer in cwd
         self.cwd = os.path.abspath(os.getcwd())
         # Create both explorers but only show one depending on cmd?
@@ -444,40 +445,19 @@ class vim_tc_explorer(object):
         self.nvim.command('normal! $')
 
     def paste(self, args, range):
-        log('paste')
         exp = self.explorers[self.selectedExplorer]
         rawCb = self.nvim.command_output('silent echo g:BoltCb')
         rawCb = rawCb.strip('\n')
         # Get opcode
         p = re.compile('^(.*?)\#')
         op = p.findall(rawCb)[0]
-        # Opcode now in op
-        log('Operation')
-        log(op)
         rawCb = re.sub(r'^.*\#', '', rawCb)
         # Parse the raw clipboard and recreate the list
         cb = rawCb.split('_{%boltSplitter%}_')
-        log('files:')
-        log_list(cb)
-        # cb now contain all the files in the clipboard
-        # Now lets copy file by file or folder by folder
-        # How do I do a prompt? Can I use Vim prompt instead?
-        # Would be nicer to use vim script and get the result
-        # (new idea is to use the bolt cmd line as info of which
-        # file that is currently being copied?)
-        # sort of like a progressbar
-        # self.nvim.current.line = 'Paste all these items? y/n'
-        # cont. here
-        # This works!!
-        # Would like to do this operation in the explorer but
-        # that would imply having neovim code in the explorer.py
-        # and I don't whant that!
-        for idx, it in enumerate(cb):
-            self.fileOfStr = "Pasteing (%d out of %d)" % (idx, len(cb))
-            if op == 'cp':
-                copy(it, exp.cwd, self.nvim)
-            elif op == 'mv':
-                self.op_move_with_prompt(it, exp.cwd)
+        if op == 'cp':
+            self.copyUtil.copy_list(cb, exp.cwd)
+        elif op == 'mv':
+            self.copyUtil.move_list(cb, exp.cwd)
         exp.refreshListing()
         exp.updateListing(exp.pattern)
         exp.draw()
@@ -534,7 +514,7 @@ class vim_tc_explorer(object):
             inputLine = inputLine.replace("%", "")
             # Handle backspace
             if not inputLine and (not self.nvim.current.buffer[1] ==
-                                  'Filter active: (abort with <c-c>)'):
+                                  'Filter active: (abort with <c-w>)'):
                 if(exp.isSearcher):
                     # Restore
                     self.expSave.window = exp.window
