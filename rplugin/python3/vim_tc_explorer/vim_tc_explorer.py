@@ -6,9 +6,11 @@
 import neovim
 import os
 import re
+from vim_tc_explorer.copy import copy
 from vim_tc_explorer.logger import log, log_list
 from vim_tc_explorer.explorer import explorer
 from vim_tc_explorer.searcher import searcher
+from vim_tc_explorer.utils import init_utils, python_input
 
 
 class vim_tc_explorer(object):
@@ -17,6 +19,7 @@ class vim_tc_explorer(object):
         explorers """
     def __init__(self, nvim):
         self.nvim = nvim
+        init_utils(nvim)
         # Start the explorer in cwd
         self.cwd = os.path.abspath(os.getcwd())
         # Create both explorers but only show one depending on cmd?
@@ -103,18 +106,12 @@ class vim_tc_explorer(object):
         self.nvim.command("inoremap <buffer> <C-v> <ESC>:BoltPaste<CR>")
         self.nvim.command("inoremap <buffer> <F6> <ESC>:BoltMove name: ")
         self.nvim.command("inoremap <buffer> <F7> <ESC>:BoltMkdir name: ")
-        remapStr = "inoremap <buffer> <F8> <ESC>:BoltDelete Delete(y/n)? "
+        remapStr = "inoremap <buffer> <F8> <ESC>:BoltDelete<CR>"
         self.nvim.command(remapStr)
         remapStr = "inoremap <buffer> <C-p> <ESC>:BoltCreateFile name: "
         self.nvim.command(remapStr)
         # Close
         self.nvim.command("inoremap <buffer> <C-q> <ESC>:TcExpClose<CR>")
-
-    def python_input(self, message = 'input'):
-        self.nvim.command('call inputsave()')
-        self.nvim.command("let user_input = input('" + message + ": ')")
-        self.nvim.command('call inputrestore()')
-        return self.nvim.eval('user_input')
 
 # ============================================================================
 # Commands
@@ -400,7 +397,7 @@ class vim_tc_explorer(object):
 
     def delete(self, args, range):
         exp = self.explorers[self.selectedExplorer]
-        exp.delete(args[1])
+        exp.delete()
         self.nvim.command('startinsert')
         self.nvim.command('normal! $')
         exp.draw()
@@ -448,6 +445,7 @@ class vim_tc_explorer(object):
 
     def paste(self, args, range):
         log('paste')
+        exp = self.explorers[self.selectedExplorer]
         rawCb = self.nvim.command_output('silent echo g:BoltCb')
         rawCb = rawCb.strip('\n')
         # Get opcode
@@ -468,15 +466,21 @@ class vim_tc_explorer(object):
         # (new idea is to use the bolt cmd line as info of which
         # file that is currently being copied?)
         # sort of like a progressbar
-        ogCmdTxt = self.nvim.current.line 
         # self.nvim.current.line = 'Paste all these items? y/n'
         # cont. here
         # This works!!
         # Would like to do this operation in the explorer but
         # that would imply having neovim code in the explorer.py
         # and I don't whant that!
-        test = self.python_input('Paste this file?')
-        log(test)
+        for idx, it in enumerate(cb):
+            self.fileOfStr = "Pasteing (%d out of %d)" % (idx, len(cb))
+            if op == 'cp':
+                copy(it, exp.cwd, self.nvim)
+            elif op == 'mv':
+                self.op_move_with_prompt(it, exp.cwd)
+        exp.refreshListing()
+        exp.updateListing(exp.pattern)
+        exp.draw()
         self.nvim.command('startinsert')
         self.nvim.command('normal! $')
 

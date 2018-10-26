@@ -7,6 +7,7 @@ import os
 import shutil
 from vim_tc_explorer.logger import log, log_list
 from vim_tc_explorer.filter import filter
+from vim_tc_explorer.utils import python_input
 
 
 class explorer(object):
@@ -80,16 +81,20 @@ class explorer(object):
         for it in self.markers[:-1]:
             # If someone has this in their path its their problem :)
             ret += os.path.join(self.cwd, it) + '_{%boltSplitter%}_'
-        ret += os.path.join(self.cwd, self.markers[len(self.markers)-1])
+        if(len(self.markers) > 0):
+            ret += os.path.join(self.cwd, self.markers[len(self.markers)-1])
         return ret
 
-    def delete(self, yesno):
+    def delete(self):
+        yesno = python_input('Delete selection (y/n - default)?')
         if yesno == "y":
-            selFile = self.getSelected()[0]
-            if os.path.isdir(selFile):
-                shutil.rmtree(selFile)
-            else:
-                os.remove(selFile)
+            for it in self.markers:
+                selFile = os.path.join(self.cwd, it)
+                if os.path.isdir(selFile):
+                    shutil.rmtree(selFile)
+                else:
+                    os.remove(selFile)
+            self.clearMarkers()
             self.cd('.')
             self.updateListing(self.pattern)
 
