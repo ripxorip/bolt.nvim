@@ -19,9 +19,13 @@ class CopyUtilitiy(object):
     # I N T E R F A C E
     # ====================
     def copy_list(self, li, dest):
+        self.forAll = False
+        self.forAllAction = 'skip'
         for idx, it in enumerate(li):
             if os.path.isfile(it):
                 self.copy_file(it, dest)
+        self.forAll = False
+        self.forAllAction = 'skip'
     
     def move_list(self, li):
         pass
@@ -31,7 +35,15 @@ class CopyUtilitiy(object):
         # dest is the dest path
         destFile = os.path.join(dest, os.path.basename(src))
         if os.path.isfile(destFile):
-            resp = python_input(message='%s exists! Overwrite(o), AppendName(a), Skip(s)? Default=a' % destFile)
+            if not self.forAll:
+                resp = python_input(message='%s exists! Overwrite(o), AppendName(a), Skip(s)? Default=a, add "all" to do for all' % destFile)
+                # If the response is longer than 1 we expect the user to want to do the action for all.
+                if len(resp) > 1:
+                    resp = resp[0]
+                    self.forAllAction = resp
+                    self.forAll = True
+            else:
+                resp = self.forAllAction
             # Overwrite
             if resp == 'o':
                 os.remove(destFile)
