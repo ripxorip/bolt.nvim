@@ -19,31 +19,74 @@ class CopyUtilitiy(object):
     # I N T E R F A C E
     # ====================
     def copy_list(self, li, dest):
-        self.forAll = False
-        self.forAllAction = 'skip'
-        for idx, it in enumerate(li):
-            if os.path.isfile(it):
-                self.copy_file(it, dest)
-        self.forAll = False
-        self.forAllAction = 'skip'
+        self.fileForAllAction = '--'
+        self.dirForAllAction = '--'
+        self._copy_list(li, dest)
+        self.fileForAllAction = '--'
+        self.dirForAllAction = '--'
     
     def move_list(self, li):
         pass
     # ====================
 
+    # Used in order to ease recursion
+    def _copy_list(self, li, dest):
+        for idx, it in enumerate(li):
+            if os.path.isfile(it):
+                self.copy_file(it, dest)
+            # Paste folder
+            elif os.path.isdir(it):
+                self.copy_folder(it, dest)
+
+    def copy_folder(self, src, dest):
+        # IDEA: make recursion of the copy_list function for all child files of the dir?
+        # Create list of all the files
+        c = os.listdir(src)
+        contents = []
+        for it in c:
+            contents.append(os.path.join(src, it))
+        dirName = os.path.basename(os.path.normpath(src))
+        destDir = os.path.join(dest, dirName)
+        if os.path.isdir(destDir):
+            if self.dirForAllAction == '--':
+                resp = python_input(message='%s exists! AppendName(a), Mege(m), Skip(s)? Default=a, add "all" to do for all' % dirName)
+                if len(resp) > 1:
+                    resp = resp[0]
+                    self.dirForAllAction = resp
+            else:
+                resp = self.dirForAllAction
+            # Take action on what to do with the folder depending on op
+            if resp == 'a':
+                # Create a new folder with an unique name
+                upath = self.uniquify(os.path.join(dest, dirName))
+                os.makedirs(upath)
+                destDir = upath
+            elif resp == 's':
+                # Skip this dir
+                return
+            elif resp == 'm':
+                # Merge doesn't need any logic
+                pass
+        else:
+            # Path doesn't exist so lets make it
+            os.makedirs(destDir)
+        # Do the copy
+        self._copy_list(contents, destDir)
+
+
+
     def copy_file(self, src, dest):
         # dest is the dest path
         destFile = os.path.join(dest, os.path.basename(src))
         if os.path.isfile(destFile):
-            if not self.forAll:
+            if self.fileForAllAction == '--':
                 resp = python_input(message='%s exists! Overwrite(o), AppendName(a), Skip(s)? Default=a, add "all" to do for all' % destFile)
                 # If the response is longer than 1 we expect the user to want to do the action for all.
                 if len(resp) > 1:
                     resp = resp[0]
-                    self.forAllAction = resp
-                    self.forAll = True
+                    self.fileForAllAction = resp
             else:
-                resp = self.forAllAction
+                resp = self.fileForAllAction
             # Overwrite
             if resp == 'o':
                 os.remove(destFile)
@@ -56,9 +99,6 @@ class CopyUtilitiy(object):
         # Start the actual copy
         self.progBar = ProgressBar('Copying ' + os.path.basename(destFile) + ' ')
         self.ll_copyfile(src, destFile)
-
-    def copy_folder(self, f):
-        pass
 
     # H E L P E R S
     #====================
@@ -83,9 +123,9 @@ class CopyUtilitiy(object):
                 bn = nn + sp[1]
                 testPath = os.path.join(os.path.dirname(testPath), bn)
         else:
-            # TODO Folders | Untested!
+            # Folders
             while os.path.isdir(testPath):
-                bn = os.path.basename(testPath)
+                bn = os.path.basename(os.path.normpath(testPath))
                 if (bn.endswith(str(start))):
                     start += 1
                     nn = bn[:-1] + str(start)
