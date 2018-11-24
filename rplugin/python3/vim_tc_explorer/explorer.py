@@ -188,9 +188,9 @@ class explorer(object):
         ret.append(leadingC + qhStr)
         qhStr = '              <C-f>:Find   <C-g>:Grep   <C-p>:New File'
         ret.append(leadingC + qhStr)
-        qhStr = '              <F2>:Rename  <F5>:Copy    <F6>:Move   '
+        qhStr = '              <F2>:Rename  <F5>:Copy    <F6>:Move'
         ret.append(leadingC + qhStr)
-        qhStr = '              <F7>:Mkdir   <F8>:Delete   '
+        qhStr = '              <F7>:Mkdir   <F8>:Delete  <C-a>:Super search'
         ret.append(leadingC + qhStr)
         ret.append(leadingC + bar)
         return ret

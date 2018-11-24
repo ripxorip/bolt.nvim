@@ -99,6 +99,10 @@ class VimTcExplorerHandlers(object):
     def bolt_display_log(self, args, range):
         logger.display(self.nvim)
 
+    @neovim.command("BoltSuperSearch", range='', nargs='*', sync=True)
+    def bolt_super_search(self, args, range):
+        self.TcExplorer.bolt_super_search(args, range)
+
     @neovim.command("TcSearch", range='', nargs='*', sync=True)
     def tc_search(self, args, range):
         self.TcExplorer.tc_search(args, range)

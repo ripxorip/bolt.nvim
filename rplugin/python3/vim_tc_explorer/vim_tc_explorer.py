@@ -10,6 +10,7 @@ from vim_tc_explorer.copy import CopyUtilitiy
 from vim_tc_explorer.logger import log, log_list
 from vim_tc_explorer.explorer import explorer
 from vim_tc_explorer.searcher import searcher
+from vim_tc_explorer.super_searcher import super_searcher
 from vim_tc_explorer.utils import init_utils, python_input
 
 
@@ -90,7 +91,9 @@ class vim_tc_explorer(object):
         # Set cwd
         self.nvim.command("inoremap <buffer> <C-s> <ESC>:TcSetCwd<CR>")
         # Expand/Collapse search matches
-        self.nvim.command("inoremap <buffer> <C-a> <ESC>:TcSearchToggle<CR>")
+        self.nvim.command("inoremap <buffer> <C-x> <ESC>:TcSearchToggle<CR>")
+        # Summon the super searcher
+        self.nvim.command("inoremap <buffer> <C-a> <ESC>:BoltSuperSearch<CR>")
         # File operations
         #
         # Original total commander shortcuts
@@ -333,6 +336,22 @@ class vim_tc_explorer(object):
         self.nvim.command('normal! $')
         str = 'Help: <kbd> Filter pattern; <bs> Go to parent'
         self.nvim.current.buffer.append(str)
+
+    def bolt_super_search(self, args, range):
+        # Save the current explorer for restoration when the searcher finish
+        self.expSave = self.explorers[self.selectedExplorer]
+        se = super_searcher(self.nvim, self.expSave.buffer, self.expSave.cwd)
+        se.window = self.expSave.window
+        # Perform the search with the correct parameters
+        _dir = self.expSave.cwd
+        se.search(_dir)
+        self.explorers[self.selectedExplorer] = se
+        self.explorers[self.selectedExplorer].draw()
+        self.nvim.command('startinsert')
+        self.nvim.command('normal! $')
+        _str = 'Help: <kbd> Filter pattern; <bs> Go to parent'
+        self.nvim.current.buffer.append(_str)
+
 
     def tc_grep(self, args, range):
         """ The grep command """

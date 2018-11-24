@@ -18,6 +18,7 @@ syntax match commands "<F6>"
 syntax match commands "<F7>"
 syntax match commands "<F8>"
 syntax match commands "<C-p>"
+syntax match commands "<C-a>"
 
 " Match file types | FIXME: Add more
 syntax match editable ".*\.py$"

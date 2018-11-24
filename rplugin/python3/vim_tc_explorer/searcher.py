@@ -165,7 +165,7 @@ class searcher(object):
                    len(self.fileList))
         # Shall be highlighted
         ret.append(leadingC + '  $>' + self.command)
-        qhStr = '  Quik Help: <Ret>:Open <C-a>:Expand <C-q>:Quit'
+        qhStr = '  Quik Help: <Ret>:Open <C-x>:Expand <C-q>:Quit'
         ret.append(leadingC + qhStr)
         ret.append(leadingC + bar)
         return ret
