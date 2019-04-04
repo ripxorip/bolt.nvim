@@ -84,6 +84,9 @@ class vim_tc_explorer(object):
         # Grep
         str = "inoremap <buffer> <C-g> <ESC>:TcGrep "
         self.nvim.command(str)
+        # Git status
+        str = "inoremap <buffer> <C-i> <ESC>:BoltGitStatus<CR>"
+        self.nvim.command(str)
         # Abort filter
         str = "inoremap <buffer> <C-w> <ESC>:TcAbortFilter<CR>"
         self.nvim.command(str)
@@ -356,6 +359,14 @@ class vim_tc_explorer(object):
         self.nvim.command('normal! $')
         str = 'Help: <kbd> Filter pattern; <bs> Go to parent'
         self.nvim.current.buffer.append(str)
+
+    def gitStatus(self, args, range):
+        firstFile = self.explorers[self.selectedExplorer].getFirstFile()
+        filePath = os.path.join(self.explorers[self.selectedExplorer].cwd, firstFile)
+        self.nvim.command('e %s' % (os.path.abspath(filePath)))
+        self.close()
+        self.nvim.command('G')
+        self.nvim.command('bd #')
 
     def tc_search(self, args, range):
         """ Search patterns comes from command line """

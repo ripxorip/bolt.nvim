@@ -30,6 +30,20 @@ class explorer(object):
         self.headerLength = 9
         self.markers = []
 
+    def getFirstFileInFolder(self, folder):
+        log(folder)
+        currentFiles = os.listdir(folder)
+        for f in currentFiles:
+            cf = os.path.abspath(os.path.join(folder, f))
+            if os.path.isdir(os.path.abspath(cf)):
+                return self.getFirstFileInFolder(cf)
+            else:
+                return f
+        return None
+
+    def getFirstFile(self):
+        return self.getFirstFileInFolder(os.path.abspath(self.cwd))
+
     def sortFiles(self):
         ogFiles = []
         ogFiles[:] = self.currentFiles[:]
@@ -188,9 +202,9 @@ class explorer(object):
         ret.append(leadingC + qhStr)
         qhStr = '              <C-f>:Find   <C-g>:Grep   <C-p>:New File'
         ret.append(leadingC + qhStr)
-        qhStr = '              <F2>:Rename  <F5>:Copy    <F6>:Move   '
+        qhStr = '              <F2>:Rename  <F5>:Copy    <F6>:Move'
         ret.append(leadingC + qhStr)
-        qhStr = '              <F7>:Mkdir   <F8>:Delete   '
+        qhStr = '              <F7>:Mkdir   <F8>:Delete  <C-i>:Git Status'
         ret.append(leadingC + qhStr)
         ret.append(leadingC + bar)
         return ret
