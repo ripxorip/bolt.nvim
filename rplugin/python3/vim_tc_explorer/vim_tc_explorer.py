@@ -447,6 +447,8 @@ class vim_tc_explorer(object):
         # Get the selected files to clipboard
         exp = self.explorers[self.selectedExplorer]
         cb = exp.get_markers_as_string()
+        # Add the path(s) to bolt ('b') register
+        self.nvim.command("let @b='%s'" % (cb.replace('_{%boltSplitter%}_', ',')))
         # This way it is consistent between different instances
         # of bolt => will be nice for the refactoring of
         # multiple panes :)
