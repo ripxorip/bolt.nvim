@@ -18,28 +18,28 @@ class VimTcExplorerHandlers(object):
         self.TcExplorer = vim_tc_explorer(nvim)
         logger.log('Plugin Initialized')
 
-    @neovim.command("Tc", range='', nargs='*', sync=True)
+    @neovim.command("Bolt", range='', nargs='*', sync=True)
     def tc_explore(self, args, range):
         self.TcExplorer.tc_explore(args, range)
         logger.log('Explorer Spawned')
 
-    @neovim.command("TcCwd", range='', nargs='*', sync=True)
+    @neovim.command("BoltCwd", range='', nargs='*', sync=True)
     def tc_explore_cwd(self, args, range):
         self.TcExplorer.tc_explore_cwd(args, range)
 
-    @neovim.command("Tcd", range='', nargs='*', sync=True)
+    @neovim.command("Boltd", range='', nargs='*', sync=True)
     def tc_explore_dual(self, args, range):
         self.TcExplorer.tc_explore_dual(args, range)
 
-    @neovim.command("TcExpEnter", range='', nargs='*', sync=True)
+    @neovim.command("BoltExpEnter", range='', nargs='*', sync=True)
     def tc_enter(self, args, range):
         self.TcExplorer.tc_enter(args, range)
 
-    @neovim.command("TcExpUp", range='', nargs='*', sync=True)
+    @neovim.command("BoltExpUp", range='', nargs='*', sync=True)
     def tc_up(self, args, range):
         self.TcExplorer.tc_up(args, range)
 
-    @neovim.command("TcExpDown", range='', nargs='*', sync=True)
+    @neovim.command("BoltExpDown", range='', nargs='*', sync=True)
     def tc_down(self, args, range):
         self.TcExplorer.tc_down(args, range)
 
@@ -51,15 +51,15 @@ class VimTcExplorerHandlers(object):
     def pg_down(self, args, range):
         self.TcExplorer.pg_down(args, range)
 
-    @neovim.command("TcExpClose", range='', nargs='*', sync=True)
+    @neovim.command("BoltExpClose", range='', nargs='*', sync=True)
     def tc_close(self, args, range):
         self.TcExplorer.tc_close(args, range)
 
-    @neovim.command("TcExpTab", range='', nargs='*', sync=True)
+    @neovim.command("BoltExpTab", range='', nargs='*', sync=True)
     def tc_tab(self, args, range):
         self.TcExplorer.tc_tab(args, range)
 
-    @neovim.command("TcSetCwd", range='', nargs='*', sync=True)
+    @neovim.command("BoltSetCwd", range='', nargs='*', sync=True)
     def tc_set_cwd(self, args, range):
         self.TcExplorer.tc_set_cwd(args, range)
 
@@ -103,23 +103,23 @@ class VimTcExplorerHandlers(object):
     def bolt_git_status(self, args, range):
         self.TcExplorer.gitStatus(args, range)
 
-    @neovim.command("TcSearch", range='', nargs='*', sync=True)
+    @neovim.command("BoltSearch", range='', nargs='*', sync=True)
     def tc_search(self, args, range):
         self.TcExplorer.tc_search(args, range)
 
-    @neovim.command("TcFind", range='', nargs='*', sync=True)
+    @neovim.command("BoltFind", range='', nargs='*', sync=True)
     def tc_find(self, args, range):
         self.TcExplorer.tc_find(args, range)
 
-    @neovim.command("TcGrep", range='', nargs='*', sync=True)
+    @neovim.command("BoltGrep", range='', nargs='*', sync=True)
     def tc_grep(self, args, range):
         self.TcExplorer.tc_grep(args, range)
 
-    @neovim.command("TcAbortFilter", range='', nargs='*', sync=True)
+    @neovim.command("BoltAbortFilter", range='', nargs='*', sync=True)
     def tc_abort_filter(self, args, range):
         self.TcExplorer.abortFilter(args, range)
 
-    @neovim.command("TcSearchToggle", range='', nargs='*', sync=True)
+    @neovim.command("BoltSearchToggle", range='', nargs='*', sync=True)
     def tc_search_toggle(self, args, range):
         self.TcExplorer.tc_search_toggle(args, range)
 

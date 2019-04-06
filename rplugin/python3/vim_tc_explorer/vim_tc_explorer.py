@@ -60,40 +60,40 @@ class vim_tc_explorer(object):
     def createKeyMap(self):
         # Remap keys for the input layer
         # Enter
-        self.nvim.command("inoremap <buffer> <CR> <ESC>:TcExpEnter<CR>")
+        self.nvim.command("inoremap <buffer> <CR> <ESC>:BoltExpEnter<CR>")
         # Backspace
         self.nvim.command("inoremap <buffer> <BS> %")
         # Up
-        self.nvim.command("inoremap <buffer> <C-k> <ESC>:TcExpUp<CR>")
-        self.nvim.command("inoremap <buffer> <Up> <ESC>:TcExpUp<CR>")
+        self.nvim.command("inoremap <buffer> <C-k> <ESC>:BoltExpUp<CR>")
+        self.nvim.command("inoremap <buffer> <Up> <ESC>:BoltExpUp<CR>")
         # Down
-        self.nvim.command("inoremap <buffer> <C-j> <ESC>:TcExpDown<CR>")
-        self.nvim.command("inoremap <buffer> <Down> <ESC>:TcExpDown<CR>")
+        self.nvim.command("inoremap <buffer> <C-j> <ESC>:BoltExpDown<CR>")
+        self.nvim.command("inoremap <buffer> <Down> <ESC>:BoltExpDown<CR>")
         # Pg Up
         self.nvim.command("inoremap <buffer> <C-u> <ESC>:BoltPgUp<CR>")
         # Pg Down
         self.nvim.command("inoremap <buffer> <C-d> <ESC>:BoltPgDown<CR>")
         # Tab
-        self.nvim.command("inoremap <buffer> <tab> <ESC>:TcExpTab<CR>")
+        self.nvim.command("inoremap <buffer> <tab> <ESC>:BoltExpTab<CR>")
         # Search
-        str = "inoremap <buffer> <C-b> <ESC>:TcSearch (-t/-g)file;(pattern): "
+        str = "inoremap <buffer> <C-b> <ESC>:BoltSearch (-t/-g)file;(pattern): "
         self.nvim.command(str)
         # Find
-        str = "inoremap <buffer> <C-f> <ESC>:TcFind "
+        str = "inoremap <buffer> <C-f> <ESC>:BoltFind "
         self.nvim.command(str)
         # Grep
-        str = "inoremap <buffer> <C-g> <ESC>:TcGrep "
+        str = "inoremap <buffer> <C-g> <ESC>:BoltGrep "
         self.nvim.command(str)
         # Git status
         str = "inoremap <buffer> <C-i> <ESC>:BoltGitStatus<CR>"
         self.nvim.command(str)
         # Abort filter
-        str = "inoremap <buffer> <C-w> <ESC>:TcAbortFilter<CR>"
+        str = "inoremap <buffer> <C-w> <ESC>:BoltAbortFilter<CR>"
         self.nvim.command(str)
         # Set cwd
-        self.nvim.command("inoremap <buffer> <C-s> <ESC>:TcSetCwd<CR>")
+        self.nvim.command("inoremap <buffer> <C-s> <ESC>:BoltSetCwd<CR>")
         # Expand/Collapse search matches
-        self.nvim.command("inoremap <buffer> <C-a> <ESC>:TcSearchToggle<CR>")
+        self.nvim.command("inoremap <buffer> <C-a> <ESC>:BoltSearchToggle<CR>")
         # File operations
         #
         # Original total commander shortcuts
@@ -115,7 +115,7 @@ class vim_tc_explorer(object):
         remapStr = "inoremap <buffer> <C-p> <ESC>:BoltCreateFile name: "
         self.nvim.command(remapStr)
         # Close
-        self.nvim.command("inoremap <buffer> <C-q> <ESC>:TcExpClose<CR>")
+        self.nvim.command("inoremap <buffer> <C-q> <ESC>:BoltExpClose<CR>")
 
 # ============================================================================
 # Commands
