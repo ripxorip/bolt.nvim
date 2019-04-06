@@ -67,6 +67,8 @@ call plug#end()
 | ---                   | ---                                                                                   |
 | `enter`               | Open the selected file/cd to the selected folder                                      |
 | `backspace`           | Clear a character from the filter / go to parent directory if filter is cleared       |
+| `Ctrl-j/k`            | Move the selection one up/down                                                        |
+| `Ctrl-d/u`            | Page up / page down the selection                                                     |
 | `Ctrl-w`              | Clear the filter                                                                      |
 | `a-z`                 | Filter as you type                                                                    |
 
