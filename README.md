@@ -56,11 +56,21 @@ call plug#end()
 
 ## Usage
 
+### Open Bolt
 | Command           | Action                                    |
 | ---               | ---                                       |
 | `:Bolt`           | Open up the bolt explorer                 |
 | `:BoltCwd`        | Open up the bolt explorer in cwd          |
 
+### Keybindings
+| Command               | Action                                                                                |
+| ---                   | ---                                                                                   |
+| `enter`               | Open the selected file/cd to the selected folder                                      |
+| `backspace`           | Clear a character from the filter / go to parent directory if filter is cleared       |
+| `Ctrl-w`              | Clear the filter                                                                      |
+| `a-z`                 | Filter as you type                                                                    |
+
+For actions, refer to the top menu of the explorer.
 ## Self-Promotion
 Like bolt.nvim? Make sure to follow the repository and why not leave a star.
 
