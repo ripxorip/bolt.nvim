@@ -71,6 +71,9 @@ call plug#end()
 | `Ctrl-d/u`            | Page up / page down the selection                                                     |
 | `Ctrl-w`              | Clear the filter                                                                      |
 | `a-z`                 | Filter as you type                                                                    |
+| `space`               | Select                                                                                |
+| `Ctrl-c`              | Copy selection                                                                        |
+| `Ctrl-v`              | Paste selection                                                                       |
 
 For actions, refer to the top menu of the explorer.
 ## Self-Promotion
