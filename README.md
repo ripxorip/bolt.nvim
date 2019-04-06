@@ -30,6 +30,14 @@ Unleash the commander using the multi-pane mode.
 The development of Bolt.nvim is still in a **very early phase**, so bugs are expected. 
 If you find something that needs fixing please create an issue.
 
+## Requirements
+bolt.nvim requires Neovim with Python3.
+tIf `:echo has("python3")` returns `1`, then you have python 3 support; otherwise, see below.
+
+You can enable the Neovim Python3 interface with pip:
+
+    pip3 install neovim
+
 ## Installation
 
 **Note:** bolt.nvim requires Neovim(latest is recommended) with Python3 enabled.
@@ -46,26 +54,12 @@ Plug 'philip-karlsson/bolt.nvim', { 'do': ':UpdateRemotePlugins' }
 call plug#end()
 ```
 
-## Requirements
-bolt.nvim requires Neovim with Python3.
-tIf `:echo has("python3")` returns `1`, then you have python 3 support; otherwise, see below.
+## Usage
 
-You can enable the Neovim Python3 interface with pip:
-
-    pip3 install neovim
-
-## Development
-Currently, the majority of the work is about refactoring the _bolt core_ parts of the plugin
-to a separate git repository isolating the backend from the frontend (which is currently not the
-case). Hopefully this will increase speed and making it possible to use in other scenarios as well.
-As soon as that work is completed the core will be imported here and the plugin updated.
-
-### TODOs:
-- Refactor _Bolt core_
-- Create proper vim documentation
-- Complete the dual-pane mode
-- Make it possible to navigate archives (TC feature)
-- Populate README.md with keybindings
+| Command           | Action                                    |
+| ---               | ---                                       |
+| `:Bolt`           | Open up the bolt explorer                 |
+| `:BoltCwd`        | Open up the bolt explorer in cwd          |
 
 ## Self-Promotion
 Like bolt.nvim? Make sure to follow the repository and why not leave a star.
