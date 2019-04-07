@@ -92,6 +92,9 @@ class explorer(object):
         # returns a string that constitutes the clipboard
         # which can be set in the host environment
         ret = ''
+        if len(self.markers) == 0:
+            ret = self.getSelected()[0]
+            return
         for it in self.markers[:-1]:
             # If someone has this in their path its their problem :)
             ret += os.path.join(self.cwd, it) + '_{%boltSplitter%}_'
