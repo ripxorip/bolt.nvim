@@ -92,7 +92,7 @@ class searcher(object):
         self.nvim.command('setlocal filetype=vim_tc_search_result')
         self.dir = dir
         self.command = "cd %s && " % dir
-        self.command += "rg -g %s --files" % (pattern)
+        self.command += "rg -g *%s* --files" % (pattern)
         self.buffer[:] = []
         self.nvim.command("r !%s" % self.command)
         self.nvim.current.buffer = self.prevbuffer

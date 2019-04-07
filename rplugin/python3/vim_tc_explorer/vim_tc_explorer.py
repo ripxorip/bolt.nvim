@@ -327,7 +327,7 @@ class vim_tc_explorer(object):
         # Replace the current explorer with a searcher and borrow its buffer
         se = searcher(self.nvim, self.expSave.buffer, self.expSave.cwd)
         se.window = self.expSave.window
-        # Perfor the search with the correct parameters
+        # Perform the search with the correct parameters
         dir = self.expSave.cwd
         se.find(dir, args[0])
         self.explorers[self.selectedExplorer] = se
