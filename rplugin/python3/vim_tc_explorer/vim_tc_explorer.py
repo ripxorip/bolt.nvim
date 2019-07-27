@@ -52,10 +52,10 @@ class vim_tc_explorer(object):
         if(withFile is False):
             # Shift to the OG buffer
             self.nvim.current.buffer = self.ogBuffer
-        self.nvim.command('bd %s' % self.explorerBufferNumberOne)
+        self.nvim.command('bwipeout %s' % self.explorerBufferNumberOne)
         if(self.explorerBufferNumberTwo is not None):
-            self.nvim.command('bd %s' % self.explorerBufferNumberTwo)
-        self.nvim.command('bd %s' % self.inputBufferNumber)
+            self.nvim.command('bwipeout %s' % self.explorerBufferNumberTwo)
+        self.nvim.command('bwipeout %s' % self.inputBufferNumber)
 
     def createKeyMap(self):
         # Remap keys for the input layer
@@ -366,7 +366,7 @@ class vim_tc_explorer(object):
         self.nvim.command('e %s' % (os.path.abspath(filePath)))
         self.close()
         self.nvim.command('G')
-        self.nvim.command('bd #')
+        self.nvim.command('bwipeout #')
 
     def tc_search(self, args, range):
         """ Search patterns comes from command line """
