@@ -49,7 +49,7 @@ For vim-plug:
 
 call plug#begin()
 
-Plug 'philip-karlsson/bolt.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'ripxorip/bolt.nvim', { 'do': ':UpdateRemotePlugins' }
 
 call plug#end()
 ```
