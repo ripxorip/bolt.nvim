@@ -17,7 +17,7 @@ syntax match commands "<F5>"
 syntax match commands "<F6>"
 syntax match commands "<F7>"
 syntax match commands "<F8>"
-syntax match commands "<C-p>"
+syntax match commands "<C-t>"
 syntax match commands "<C-i>"
 
 " Match file types | FIXME: Add more

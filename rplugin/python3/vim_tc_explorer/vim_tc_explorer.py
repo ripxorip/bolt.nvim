@@ -61,14 +61,16 @@ class vim_tc_explorer(object):
         # Remap keys for the input layer
         # Enter
         self.nvim.command("inoremap <buffer> <CR> <ESC>:BoltExpEnter<CR>")
+        self.nvim.command("inoremap <buffer> <C-j> <ESC>:BoltExpEnter<CR>")
         # Backspace
         self.nvim.command("inoremap <buffer> <BS> %")
+        self.nvim.command("inoremap <buffer> <C-h> %")
         # Up
-        self.nvim.command("inoremap <buffer> <C-k> <ESC>:BoltExpUp<CR>")
         self.nvim.command("inoremap <buffer> <Up> <ESC>:BoltExpUp<CR>")
+        self.nvim.command("inoremap <buffer> <C-p> <ESC>:BoltExpUp<CR>")
         # Down
-        self.nvim.command("inoremap <buffer> <C-j> <ESC>:BoltExpDown<CR>")
         self.nvim.command("inoremap <buffer> <Down> <ESC>:BoltExpDown<CR>")
+        self.nvim.command("inoremap <buffer> <C-n> <ESC>:BoltExpDown<CR>")
         # Pg Up
         self.nvim.command("inoremap <buffer> <C-u> <ESC>:BoltPgUp<CR>")
         # Pg Down
@@ -112,7 +114,7 @@ class vim_tc_explorer(object):
         self.nvim.command("inoremap <buffer> <F7> <ESC>:BoltMkdir name: ")
         remapStr = "inoremap <buffer> <F8> <ESC>:BoltDelete<CR>"
         self.nvim.command(remapStr)
-        remapStr = "inoremap <buffer> <C-p> <ESC>:BoltCreateFile name: "
+        remapStr = "inoremap <buffer> <C-t> <ESC>:BoltCreateFile name: "
         self.nvim.command(remapStr)
         # Close
         self.nvim.command("inoremap <buffer> <C-q> <ESC>:BoltExpClose<CR>")

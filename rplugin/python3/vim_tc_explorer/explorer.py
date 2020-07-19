@@ -203,7 +203,7 @@ class explorer(object):
         ret.append(leadingC + '  $>' + self.cwd)
         qhStr = '  Quick Help: <Ret>:Open   <C-q>:Quit   <C-s>:Set CWD'
         ret.append(leadingC + qhStr)
-        qhStr = '              <C-f>:Find   <C-g>:Grep   <C-p>:New File'
+        qhStr = '              <C-f>:Find   <C-g>:Grep   <C-t>:New File'
         ret.append(leadingC + qhStr)
         qhStr = '              <F2>:Rename  <F5>:Copy    <F6>:Move'
         ret.append(leadingC + qhStr)
